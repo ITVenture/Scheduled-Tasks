@@ -1,0 +1,88 @@
+﻿@using System.Collections
+@using ITVComponents.WebCoreToolkit.Net.Extensions
+@using ITVComponents.WebCoreToolkit.Net.TelerikUi.Extensions
+@using Kendo.Mvc.UI
+@using TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
+@{
+    Layout = "_Layout";
+}
+@{
+    ViewBag.Title = "ITV-Schedulers";
+}
+<link rel="stylesheet" type="text/css" href="/_content/PeriodicTasks.WebExtensions/css/TaskWidgets.css" />
+<script src="/_content/PeriodicTasks.WebExtensions/js/ViewScripts/ScheduledTasks_Index.js"></script>
+@Html.DetailViewScript("SchedulerProperties","SchedulerDetails#=PeriodicScheduleId#", "~/ScheduledTasks/ScheduledTasks/Details?PeriodicScheduleId=#=PeriodicScheduleId#")
+@Html.DetailViewScript("StepProperties","StepDetails#=PeriodicStepId#", "~/ScheduledTasks/ScheduledTasks/StepDetails?PeriodicStepId=#=PeriodicStepId#",false)
+@Html.DetailViewScript("AssignedLogs","LogTemplate#=PeriodicRunId#","~/ScheduledTasks/ScheduledTasks/_LogTable?periodicRunId=#=PeriodicRunId#")
+@using (Html.BeginForm())
+{
+@(Html.Kendo().Grid<ScheduledTasksController.PeriodicTaskViewModel>()
+        .Name("GridTasks")
+        .Pageable(paging =>
+        {
+            paging.PreviousNext(true);
+            paging.PageSizes(new int[] { 5, 10, 20, 50, 100, 500 });
+        })
+        .Filterable()
+        .Navigatable()
+        .Editable(editing => editing.Mode(GridEditMode.InLine))
+        .Sortable()
+        .ColumnMenu()
+        .Resizable(r => r.Columns(true))
+        .Scrollable(n => n.Height("auto"))
+    .ToolBar(toolbar =>
+        {
+            toolbar.RefreshTable();
+            toolbar.Create().Text("create new Task");
+
+        })
+        .DataSource(binding => binding.Ajax()
+            .Read(r => r.Action("GetScheduledTasks", "ScheduledTasks"))
+            .Update(r => r.Action("UpdateScheduledTask", "ScheduledTasks"))
+            .Create(r => r.Action("InsertScheduledTask", "ScheduledTasks"))
+            .Destroy(r => r.Action("DeleteScheduledTask", "ScheduledTasks"))
+            .Events(e => e.Error("ITVenture.Pages.TaskScheduler.TaskScheduler.error_handler"))
+            .Model(m =>
+            {
+                m.Id(f => f.PeriodicTaskId);
+                m.Field(n => n.TaskDiagnostics).Editable(false);
+
+            }).Sort(s => s.Add(o => o.PeriodicTaskId).Descending()))
+        .Columns(cols =>
+        {
+            cols.Bound(c => c.PeriodicTaskId).Hidden();
+            cols.DeciderInfo(c => c.TaskDiagnostics, "PeriodicTaskId", "PeriodicTasks").Title(" ").Width(40);
+            if ((bool) ViewData["Connected"])
+            {
+                cols.Command(cmd =>
+                {
+                    cmd.Custom("Run").Click("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.MainGrid.runTask").Text("\u200B").HtmlAttributes(new {@class = "itv-grid-button itv-fa-gbx glyphSprite", title = "Jetzt ausführen"}).IconClass("fad fa-play-circle").Visible("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.MainGrid.kickable");
+                }).Width(50);
+            }
+
+            cols.Bound(c => c.Name).Width(250);
+            cols.Bound(c => c.Description);
+            cols.Bound(c => c.Priority).Width(90);
+            cols.Bound(c => c.ExclusiveAreaName).Width(200);
+            cols.Bound(c => c.Active).Width(90);
+            cols.Bound(c => c.Remarks).Width(400);
+            cols.Command(cmd =>
+            {
+                cmd.Edit().HtmlAttributes(new { title = "Bearbeiten" });
+                cmd.PopupConfirmDelete();
+            }).Width(100);
+        }).ClientDetailTemplateId("AssignedSchedule"))
+}
+<script id="AssignedSchedule" type="text/x-kendo-template">
+    @(Html.Kendo().TabStrip()
+               .Name("tabStrip_#=PeriodicTaskId#")
+               .SelectedIndex(0)
+               .Animation(animation => animation.Open(open => open.Fade(FadeDirection.In)))
+               .Items(items =>
+               {
+                   items.Add().Text("Schedule").LoadContentFrom("_ScheduleRoot", "ScheduledTasks", new {periodicTaskId = "#=PeriodicTaskId#"});
+                   items.Add().Text("Execution History").LoadContentFrom("_History", "ScheduledTasks", new {PeriodicTaskId = "#=PeriodicTaskId#"});
+                   items.Add().Text("Steps").LoadContentFrom("_StepRoot", "ScheduledTasks", new { periodicTaskId = "#=PeriodicTaskId#" });
+               })
+           .ToClientTemplate())
+</script>

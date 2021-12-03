@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor" ToolsVersion="16.0">
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.1.0-RC1</Version>
+    <RootNamespace>TaskSchedulerWeb</RootNamespace>
+    <PackageId>PeriodicTasks.WebExtensions</PackageId>
+    <Copyright>IT-Venture GmbH</Copyright>
+    <Description>Contains the Controllers and Views for TaskScheduler Web App.</Description>
+    <RazorCompileOnBuild>true</RazorCompileOnBuild>
+    <Authors>IT-Venture GmbH</Authors>
+    <Product>PeriodicTasks</Product>
+    <RepositoryUrl>https://github.com/ITVenture/PeriodicTasks</RepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="2.1.0-RC4" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="2.1.0-RC4" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.Net.TelerikUi" Version="2.1.0-RC4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PeriodicTasks.DbContext\PeriodicTasks.DbContext.csproj" />
+    <ProjectReference Include="..\PeriodicTasks.FrontendHelpers\PeriodicTasks.FrontendHelpers.csproj" />
+    <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />
+  </ItemGroup>
+  <Target Name="CopyPackageRel" AfterTargets="Pack" Condition="'$(Configuration)'=='Release' And '$(PushIt)'=='True'">
+    <Exec Command="%userprofile%\.nuget\nuget.exe push &quot;$(OutputPath)$(PackageId).$(PackageVersion).nupkg&quot; -Source github" />
+  </Target>
+</Project>

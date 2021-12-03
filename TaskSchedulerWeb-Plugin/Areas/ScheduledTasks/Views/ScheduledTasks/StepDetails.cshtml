@@ -1,0 +1,96 @@
+﻿@using System.Collections
+@using ITVComponents.WebCoreToolkit.Net.Extensions
+@using ITVComponents.WebCoreToolkit.Net.TelerikUi.Extensions
+@using Kendo.Mvc.UI
+@using TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
+@model TaskSchedulerWeb.Areas.ScheduledTasks.Controllers.ScheduledTasksController.WorkerDescriptionModel
+@if (Model != null)
+{
+    <div class="panel-wrap">
+        <div id="sidebar">
+            <div id="stepWorkerInformation" class="widgetbox">
+                <h3>Worker - Properties <span class="k-icon k-i-arrow-chevron-down"></span></h3>
+                <div style="display:none">
+                    <h4>Description</h4>
+                    <pre>Type:@Model.Type
+
+@Model.Description
+
+Command - Parameter:
+@Model.CommandDescription
+                </pre>
+                    <h4>Expected parameters</h4>
+                    @(Html.Kendo().Grid(Model.ExpectedParameters).Name(string.Format("StepParameters{0}", Model.PeriodicStepId)).Columns(c =>
+                    {
+                        c.Bound(n => n.Name).Width(200);
+                        c.Bound(n => n.Description);
+                        c.Bound(n => n.Required).Width(100);
+                        c.Bound(n => n.ExpectedTypeName).Width(200);
+                    }).Resizable(r => r.Columns(true))
+                        .Scrollable(s => s.Height("auto")))
+                    <h4>Returned Value</h4>
+                    <pre>Typ: @Model.ReturnType
+@Model.ReturnDescription</pre>
+                    <h4>Additional Notes</h4>
+                    <pre>
+@Model.Remarks
+</pre>
+
+                </div>
+            </div>
+            <div id="stepWorkerParameters" class="widgetbox">
+                <h3>Step - Configuration <span class="k-icon k-i-arrow-chevron-up"></span></h3>
+                <div>
+                    @(Html.Kendo().Grid<ScheduledTasksController.PeriodicStepParameterModel>()
+                        .Name(string.Format("StepParamConfig{0}", Model.PeriodicStepId))
+                        .Filterable()
+                        .Navigatable()
+                        .Editable(editing => editing.Mode(GridEditMode.InLine))
+                        .Sortable()
+                        .ColumnMenu()
+                        .ToolBar(tb =>
+                        {
+                            tb.RefreshTable();
+                            tb.Create().Text("add Parameter");
+
+                        })
+                        .DataSource(binding => binding.Ajax()
+                            .Read(r => r.Action("GetStepParameters", "ScheduledTasks", new { pPeriodicStepId = Context.Request.Query["PeriodicStepId"] }))
+                            .Update(r => r.Action("UpdateStepParameter", "ScheduledTasks", new { pPeriodicStepId = Context.Request.Query["PeriodicStepId"] }))
+                            .Create(r => r.Action("InsertStepParameter", "ScheduledTasks", new { pPeriodicStepId = Context.Request.Query["PeriodicStepId"] }))
+                            .Destroy(r => r.Action("DeleteStepParameter", "ScheduledTasks", new { pPeriodicStepId = Context.Request.Query["PeriodicStepId"] }))
+                            .Events(e => e.Error("ITVenture.Pages.TaskScheduler.TaskScheduler.error_handler").RequestEnd("ITVenture.Pages.TaskScheduler.TaskScheduler.rebind"))
+                            .Model(m =>
+                            {
+                                m.Id(f => f.PeriodicStepParameterId);
+
+
+                            }).Sort(s => s.Add(o => o.PeriodicStepParameterId).Descending()))
+                        .Columns(cols =>
+                        {
+                            cols.Bound(c => c.PeriodicStepParameterId).Hidden();
+                            cols.Bound(c => c.ParameterName).Width(200);
+                            cols.ForeignKey(d => d.ParameterType, (IEnumerable)ViewData["ParameterTypes"], "Value", "Text").Width(200);
+                            cols.Bound(c => c.Settings).Width(200);
+                            cols.Bound(c => c.Value);
+                            cols.Command(cmd =>
+                            {
+                                cmd.Edit().HtmlAttributes(new { title = "Edit" });
+                                cmd.PopupConfirmDelete();
+                            }).Width(100);
+                        }))
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        $(function() { ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Steps.InitStepView(@Model.PeriodicStepId); });
+    </script>
+}
+
+
+
+
+

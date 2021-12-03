@@ -1,0 +1,155 @@
+﻿
+@using System.Collections
+@using ITVComponents.WebCoreToolkit.Net.Extensions
+@using ITVComponents.WebCoreToolkit.Net.TelerikUi.Extensions
+@using ITVComponents.WebCoreToolkit.Net.TelerikUi.Helpers
+@using Kendo.Mvc.UI
+@using PeriodicTasks.DatabaseDrivenTaskLoading.Models
+@using TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
+@model PeriodicTasks.DatabaseDrivenTaskLoading.Models.PeriodicSchedule
+@if (Model != null)
+{
+
+    <div class="panel-wrap">
+        <!--div id="sidebar"-->
+        <div id="@($"times{Model.PeriodicScheduleId}")" class="widgetbox" style="width: 300px;margin:10px;float:left;">
+            <h3>Execution-Time</h3>
+            <div>
+                @(Html.Kendo().Grid<ScheduledTasksController.PeriodicScheduleTimeViewModel>()
+                    .Name($"GridTimes{Model.PeriodicScheduleId}")
+                    .Filterable()
+                    .Navigatable()
+                    .Editable(editing => editing.Mode(GridEditMode.InLine))
+                    .Sortable()
+                    .ColumnMenu()
+                    .Resizable(r => r.Columns(true))
+                    .ToolBar(tb =>
+                    {
+                        tb.RefreshTable();
+                        tb.Create().Text("add Executiontime");
+
+                    })
+                    .DataSource(binding => binding.Ajax()
+                        .Read(r => r.Action("GetTimes", "ScheduledTasks", new { pPeriodicScheduleId = Context.Request.Query["PeriodicScheduleId"] }))
+                        .Update(r => r.Action("UpdateTime", "ScheduledTasks", new { pPeriodicScheduleId = Context.Request.Query["PeriodicScheduleId"] }))
+                        .Create(r => r.Action("InsertTime", "ScheduledTasks", new { pPeriodicScheduleId = Context.Request.Query["PeriodicScheduleId"] }))
+                        .Destroy(r => r.Action("DeleteTime", "ScheduledTasks", new { pPeriodicScheduleId = Context.Request.Query["PeriodicScheduleId"] }))
+                        .Events(e => e.Error("ITVenture.Pages.TaskScheduler.TaskScheduler.error_handler"))
+                        .Model(m =>
+                        {
+                            m.Id(f => f.PeriodicTimeId);
+
+
+                        }).Sort(s => s.Add(o => o.PeriodicTimeId).Descending()))
+                    .Columns(cols =>
+                    {
+                        cols.Bound(c => c.PeriodicTimeId).Hidden();
+                        cols.Bound(c => c.Time).Width(170);
+                        cols.Command(cmd =>
+                        {
+                            cmd.Edit().HtmlAttributes(new { title = "Edit" });
+                            cmd.PopupConfirmDelete();
+                        }).Width(100);
+                    }))
+            </div>
+        </div>
+        <!--/div-->
+        <!--div id="main-content"-->
+        @{if (Model.Period == "m" || Model.Period == "y")
+            {
+                <div id="@($"days{Model.PeriodicScheduleId}")" class="widgetbox" style="width: 280px;margin:10px;float:left;">
+                    <h3>Days </h3>
+                    <div>
+                        @(Html.Kendo().Grid<ScheduledTasksController.PeriodicMonthdayViewModel>()
+                            .Name($"GridMonthdays{Model.PeriodicScheduleId}")
+                            .Filterable()
+                            .Navigatable()
+                            .Editable(editing => editing.Mode(GridEditMode.InLine))
+                            .Sortable()
+                            .ColumnMenu()
+                            .ToolBar(tb =>
+                            {
+                                tb.RefreshTable();
+                                tb.Create().Text("Add Executionday");
+
+                            })
+                            .DataSource(binding => binding.Ajax()
+                                .Read(r => r.Action("GetMonthDays", "ScheduledTasks", new { pPeriodicScheduleId = Context.Request.Query["PeriodicScheduleId"] }))
+                                .Update(r => r.Action("UpdateMonthDay", "ScheduledTasks", new { pPeriodicScheduleId = Context.Request.Query["PeriodicScheduleId"] }))
+                                .Create(r => r.Action("InsertMonthDay", "ScheduledTasks", new { pPeriodicScheduleId = Context.Request.Query["PeriodicScheduleId"] }))
+                                .Destroy(r => r.Action("DeleteMonthDay", "ScheduledTasks", new { pPeriodicScheduleId = Context.Request.Query["PeriodicScheduleId"] }))
+                                .Events(e => e.Error("ITVenture.Pages.TaskScheduler.TaskScheduler.error_handler"))
+                                .Model(m =>
+                                {
+                                    m.Id(f => f.PeriodicMonthdayId);
+
+
+                                }).Sort(s => s.Add(o => o.PeriodicMonthdayId).Descending()))
+                            .Columns(cols =>
+                            {
+                                cols.Bound(c => c.PeriodicMonthdayId).Hidden();
+                                cols.ForeignKey(c => c.DayNum, (IEnumerable)ViewData["Monthdays"], "Value", "Text");
+                                cols.Command(cmd =>
+                                {
+                                    cmd.Edit().HtmlAttributes(new { title = "Edit" });
+                                    cmd.PopupConfirmDelete();
+                                }).Width(100);
+                            }))
+                    </div>
+                </div>
+            }}
+        @{if (Model.Period == "y")
+            {
+                <div id="@($"months{Model.PeriodicScheduleId}")" class="widgetbox" style="width: 320px;margin:10px;float:left;">
+                    <h3>Months <span class="collapse k-icon k-i-arrowhead-n"></span></h3>
+                    <div class="d-flex flex-row">
+                        @{
+                            var mo = (PeriodicMonth)ViewData["Months"];//em.PeriodicMonths.FirstOrDefault(w => w.PeriodicScheduleId == Model.PeriodicScheduleId);
+
+                        }
+                    <div class="d-flex flex-column w-50">
+                        <div>@Html.Kendo().SwitchFor(m => mo.Jan).Name(CustomActionHelper.RandomName("Jan")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;January</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.Feb).Name(CustomActionHelper.RandomName("Feb")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;February</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.Mar).Name(CustomActionHelper.RandomName("Mar")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;March</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.Apr).Name(CustomActionHelper.RandomName("Apr")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;April</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.May).Name(CustomActionHelper.RandomName("May")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;May</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.Jun).Name(CustomActionHelper.RandomName("Jun")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;June</div>
+                    </div>
+                    <div class="d-flex flex-column w-50">
+                        <div>@Html.Kendo().SwitchFor(m => mo.Jul).Name(CustomActionHelper.RandomName("Jul")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;July</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.Aug).Name(CustomActionHelper.RandomName("Aug")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;August</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.Sep).Name(CustomActionHelper.RandomName("Sep")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;September</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.Oct).Name(CustomActionHelper.RandomName("Oct")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;October</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.Nov).Name(CustomActionHelper.RandomName("Nov")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;November</div>
+                        <div>@Html.Kendo().SwitchFor(m => mo.Dec).Name(CustomActionHelper.RandomName("Dec")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateMonth")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;December</div>
+                </div>
+            </div>
+        </div>
+    }}
+        @{if (Model.Period == "w")
+            {
+                <div id="@($"weekdays{Model.PeriodicScheduleId}")" class="widgetbox" style="width: 150px;margin:10px;float:left;">
+                    <h3>Weekdays </h3>
+                    <div class="d-flex flex-column">
+                        @{
+                            var wk = (PeriodicWeekday)ViewData["WeekDays"];
+
+                        }
+                        <div>@Html.Kendo().SwitchFor(m => wk.Monday).Name(CustomActionHelper.RandomName("Monday")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateWeekdays")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;Monday</div>
+                        <div>@Html.Kendo().SwitchFor(m => wk.Tuesday).Name(CustomActionHelper.RandomName("Tuesday")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateWeekdays")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;Tuesday</div>
+                        <div>@Html.Kendo().SwitchFor(m => wk.Wednesday).Name(CustomActionHelper.RandomName("Wednesday")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateWeekdays")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;Wednesday</div>
+                        <div>@Html.Kendo().SwitchFor(m => wk.Thursday).Name(CustomActionHelper.RandomName("Thursday")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateWeekdays")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;Thursday</div>
+                        <div>@Html.Kendo().SwitchFor(m => wk.Friday).Name(CustomActionHelper.RandomName("Friday")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateWeekdays")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;Friday</div>
+                        <div>@Html.Kendo().SwitchFor(m => wk.Saturday).Name(CustomActionHelper.RandomName("Saturday")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateWeekdays")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;Saturday</div>
+                        <div>@Html.Kendo().SwitchFor(m => wk.Sunday).Name(CustomActionHelper.RandomName("Sunday")).Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Schedule.updateWeekdays")).HtmlAttributes(new { @Model.PeriodicScheduleId })&nbsp;Saturday</div>
+                    </div>
+                </div>
+            }}
+        <!--/div-->
+    </div>
+}
+
+
+
+
+

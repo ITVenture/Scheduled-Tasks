@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup>
+    <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.1.0-RC1</Version>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RepositoryUrl>https://github.com/ITVenture/PeriodicTasks</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Resources -->
+    <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <Compile Update="Properties\Resources.Designer.cs" AutoGen="True" DependentUpon="Resources.resx" DesignTime="True" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="itvcomponents.dataaccess" Version="2.1.0-RC4" />
+    <PackageReference Include="itvcomponents.interprocesscommunication.shared" Version="2.1.0-RC4" />
+    <PackageReference Include="itvcomponents.parallelprocessing" Version="2.1.0-RC4" />
+    <PackageReference Include="itvcomponents.plugins" Version="2.1.0-RC4" />
+  </ItemGroup>
+  <Target Name="CopyPackageRel" AfterTargets="Pack" Condition="'$(Configuration)'=='Release' And '$(PushIt)'=='True'">
+    <Exec Command="%userprofile%\.nuget\nuget.exe push &quot;$(OutputPath)$(PackageId).$(PackageVersion).nupkg&quot; -Source github" />
+  </Target>
+</Project>

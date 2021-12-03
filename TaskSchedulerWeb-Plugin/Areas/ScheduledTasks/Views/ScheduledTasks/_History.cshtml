@@ -1,0 +1,47 @@
+﻿@using ITVComponents.WebCoreToolkit.Net.Extensions
+@using ITVComponents.WebCoreToolkit.Net.TelerikUi.Extensions
+@using Kendo.Mvc.UI
+@using TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
+
+<div class="d-flex flex-row mb-2">
+    <div class="p-1">@Html.Kendo().Switch().Name($"Reports{ViewData["PeriodicTaskId"]}").Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.Runs.read")).HtmlAttributes(new { PeriodicTaskId = ViewData["PeriodicTaskId"] })&nbsp;Reports</div>
+    <div class="p-1">@Html.Kendo().Switch().Name($"Warnings{ViewData["PeriodicTaskId"]}").Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.Runs.read")).HtmlAttributes(new { PeriodicTaskId = ViewData["PeriodicTaskId"] })&nbsp;Warnings</div>
+    <div class="p-1">@Html.Kendo().Switch().Name($"Errors{ViewData["PeriodicTaskId"]}").Events(ev => ev.Change("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.Runs.read")).HtmlAttributes(new { PeriodicTaskId = ViewData["PeriodicTaskId"] })&nbsp;Errors</div>
+    <div class="p-1" style="white-space:nowrap">Search:&nbsp;@Html.Kendo().TextBox().Name($"textFilter{ViewData["PeriodicTaskId"]}").HtmlAttributes(new { PeriodicTaskId = ViewData["PeriodicTaskId"] })
+        <script>
+                var tx = $("[Name='@($"textFilter{ViewData["PeriodicTaskId"]}")']");
+                tx.deferredInputEvent(1000, function() { ITVenture.Pages.TaskScheduler.TaskScheduler.Index.Runs.read({ sender: { element: tx } }); });
+        </script>
+    </div>
+</div>
+@(Html.Kendo().Grid<ScheduledTasksController.PeriodicRunViewModel>()
+    .Name($"AssignedRuns{ViewData["PeriodicTaskId"]}")
+    .Resizable(r => r.Columns(true))
+    .Sortable()
+    .Navigatable()
+    .Pageable(paging =>
+    {
+        paging.PreviousNext(true);
+        paging.PageSizes(new int[] {5, 10, 20, 50, 100, 500});
+    })
+    .Editable(editing => editing.Mode(GridEditMode.InLine))
+    .DataSource(binding => binding.Ajax()
+        .Read(r => r.Action("GetRuns", "ScheduledTasks", new {pPeriodicTaskId = $"{ViewData["PeriodicTaskId"]}"}).Data($"ITVenture.Pages.TaskScheduler.TaskScheduler.Index.Runs.data({ViewData["PeriodicTaskId"]})"))
+        .Events(e => e.Error("ITVenture.Pages.TaskScheduler.TaskScheduler.error_handler"))
+        .Model(m =>
+        {
+            m.Id(f => f.PeriodicRunId);
+
+        }).Sort(s => s.Add(o => o.PeriodicRunId).Descending()))
+    .ToolBar(toolbar =>
+    {
+        toolbar.RefreshTable();
+    })
+    .Filterable(c => c.Enabled(true))
+    .HtmlAttributes(new {PeriodicTaskId=ViewData["PeriodicTaskId"]})
+    .Columns(cols =>
+    {
+        cols.Bound(d => d.PeriodicRunId).Hidden();
+        cols.Bound(d => d.StartTime).Format("{0:dd.MM.yyyy HH:mm:ss}").Filterable(c => c.UI(GridFilterUIRole.DateTimePicker));
+        cols.Bound(d => d.EndTime).Format("{0:dd.MM.yyyy HH:mm:ss}").Filterable(c => c.UI(GridFilterUIRole.DateTimePicker));
+    }).ClientDetailTemplateId("AssignedLogs"))

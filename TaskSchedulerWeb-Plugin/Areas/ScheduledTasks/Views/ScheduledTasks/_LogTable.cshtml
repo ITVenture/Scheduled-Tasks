@@ -1,0 +1,31 @@
+﻿@using System.Collections
+@using ITVComponents.WebCoreToolkit.Net.Extensions
+@using ITVComponents.WebCoreToolkit.Net.TelerikUi.Extensions
+@using Kendo.Mvc.UI
+@using TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
+
+@(Html.Kendo().Grid<ScheduledTasksController.PeriodicLogViewModel>()
+    .Name($"AssignedLogs{ViewData["PeriodicRunId"]}")
+    .Resizable(r => r.Columns(true))
+    .Sortable()
+    .Navigatable()
+    .ToolBar(t =>
+    {
+        t.RefreshTable();
+    })
+    .Filterable()
+    .DataSource(binding => binding.Ajax()
+        .Read(r => r.Action("GetLogEntries", "ScheduledTasks", new { pPeriodicRunId = ViewData["PeriodicRunId"] }))
+        .Events(e => e.Error("ITVenture.Pages.TaskScheduler.TaskScheduler.error_handler"))
+        .Model(m =>
+        {
+            m.Id(f => f.PeriodicLogId);
+
+        }).Sort(s => s.Add(o => o.PeriodicLogId).Descending()))
+    .Columns(cols =>
+    {
+        cols.Bound(d => d.PeriodicLogId).Hidden();
+        cols.Bound(d => d.MessageType).ClientTemplate($"<span class=\"glyphSprite fas #=MessageType==0?'fa-info-circle':(MessageType==1?'fa-exclamation-circle':'fa-times-circle')#\" style=\"color:#=MessageType==0?'blue':(MessageType==1?'\\#FACC00':'red')#\">{Html.Encode("\x200b")}</span>").Title("").Width(50);
+        cols.Bound(d => d.LogTime).Format("{0:dd.MM.yyyy HH:mm:ss}").Width(150);
+        cols.Bound(d => d.Message);
+    }))

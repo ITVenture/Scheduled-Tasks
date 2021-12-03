@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup>
+    <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.1.0-RC1</Version>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RepositoryUrl>https://github.com/ITVenture/PeriodicTasks</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Properties\**" />
+    <EmbeddedResource Remove="Properties\**" />
+    <None Remove="Properties\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="itvcomponents.dataaccess" Version="2.1.0-RC4" />
+    <PackageReference Include="ITVComponents.Formatting" Version="2.1.0-RC4" />
+    <PackageReference Include="itvcomponents.parallelprocessing" Version="2.1.0-RC4" />
+    <PackageReference Include="itvcomponents.plugins" Version="2.1.0-RC4" />
+    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="2.1.0-RC4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />
+  </ItemGroup>
+  <Target Name="CopyPackageRel" AfterTargets="Pack" Condition="'$(Configuration)'=='Release' And '$(PushIt)'=='True'">
+    <Exec Command="%userprofile%\.nuget\nuget.exe push &quot;$(OutputPath)$(PackageId).$(PackageVersion).nupkg&quot; -Source github" />
+  </Target>
+</Project>

@@ -1,0 +1,44 @@
+﻿@using System.Collections
+@using ITVComponents.WebCoreToolkit.Net.Extensions
+@using ITVComponents.WebCoreToolkit.Net.TelerikUi.Extensions
+@using Kendo.Mvc.UI
+@using TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
+
+@(Html.Kendo().Grid<ScheduledTasksController.PeriodicStepModel>()
+                        .Name($"AssignedStep{ViewData["PeriodicTaskId"]}")
+                        .Resizable(r => r.Columns(true))
+                        .Scrollable(s => s.Height("auto").Enabled(true))
+                        .Navigatable()
+                        .Editable(editing => editing.Mode(GridEditMode.InLine))
+                        .ToolBar(n =>
+                        {
+                            n.RefreshTable();
+                            n.Create().Text("add Step");
+                            n.Custom().HtmlAttributes(new { onclick = "ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Steps.toggleReordering(event)" }).Text("Enable Reorder");
+                        })
+                        .Events(e => e.DataBound("ITVenture.Pages.TaskScheduler.TaskScheduler.Index.AssignedSchedule.Steps.CheckReordering"))
+                        .DataSource(binding => binding.Ajax()
+                            .Read(r => r.Action("GetTaskSteps", "ScheduledTasks", new { pPeriodicTaskId = ViewData["PeriodicTaskId"] }))
+                            .Update(r => r.Action("UpdateTaskStep", "ScheduledTasks", new { pPeriodicTaskId = ViewData["PeriodicTaskId"] }))
+                            .Create(r => r.Action("InsertTaskStep", "ScheduledTasks", new { pPeriodicTaskId = ViewData["PeriodicTaskId"] }))
+                            .Destroy(r => r.Action("DeleteTaskStep", "ScheduledTasks", new { pPeriodicTaskId = ViewData["PeriodicTaskId"] }))
+                            .Events(e => e.Error("ITVenture.Pages.TaskScheduler.TaskScheduler.error_handler").RequestEnd("ITVenture.Pages.TaskScheduler.TaskScheduler.rebind"))
+                            .Model(m => m.Id(f => f.PeriodicStepId))
+                            .Sort(s => s.Add(o => o.StepOrder).Ascending()))
+                        .Columns(cols =>
+                        {
+                            cols.Command(cmd => cmd.Custom("a").HtmlAttributes(new { @class = "sort-dragger" })).Width(50);
+                            cols.Bound(d => d.PeriodicStepId).Hidden();
+                            cols.Bound(d => d.Name).Width(200);
+                            cols.ForeignKey(d => d.WorkerName, (IEnumerable)ViewData["Workers"], "Value", "Text").Width(200);
+                            cols.Bound(d => d.OutputVariable).Width(200);
+                            cols.Bound(d => d.Command);
+                            cols.Bound(d => d.ExclusiveAreaName).Width(200);
+                            //cols.Bound(d => d.StepOrder);
+                            cols.Command(cmd =>
+                            {
+                                cmd.Edit().HtmlAttributes(new { title = "Edit" });
+                                cmd.PopupConfirmDelete();
+                            }).Width(100);
+                        })
+                        .ClientDetailTemplateId("StepProperties"))

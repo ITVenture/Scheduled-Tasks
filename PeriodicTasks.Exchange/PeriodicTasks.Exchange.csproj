@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup>
+    <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.1.0-RC1</Version>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RepositoryUrl>https://github.com/ITVenture/PeriodicTasks</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Properties\**" />
+    <EmbeddedResource Remove="Properties\**" />
+    <None Remove="Properties\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="itvcomponents.commandlineparser" Version="2.1.0-RC4" />
+    <PackageReference Include="itvcomponents.formatting" Version="2.1.0-RC4" />
+    <PackageReference Include="microsoft.exchange.webservices.NETStandard" Version="1.1.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />
+  </ItemGroup>
+  <Target Name="CopyPackageRel" AfterTargets="Pack" Condition="'$(Configuration)'=='Release' And '$(PushIt)'=='True'">
+    <Exec Command="%userprofile%\.nuget\nuget.exe push &quot;$(OutputPath)$(PackageId).$(PackageVersion).nupkg&quot; -Source github" />
+  </Target>
+</Project>
