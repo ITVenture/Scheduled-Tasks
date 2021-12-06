@@ -3,7 +3,7 @@
     <LangVersion>8.0</LangVersion>
     <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.0-RC2</Version>
+    <Version>2.1.0-RC3</Version>
     <RootNamespace>TaskSchedulerWeb</RootNamespace>
     <PackageId>PeriodicTasks.WebExtensions</PackageId>
     <Copyright>IT-Venture GmbH</Copyright>
@@ -19,9 +19,9 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="2.1.0-RC4" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="2.1.0-RC4" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.Net.TelerikUi" Version="2.1.0-RC4" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="2.1.0-RC5" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="2.1.0-RC5" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.Net.TelerikUi" Version="2.1.0-RC5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks.DbContext\PeriodicTasks.DbContext.csproj" />
@@ -29,6 +29,5 @@
     <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />
   </ItemGroup>
   <Target Name="CopyPackageRel" AfterTargets="Pack" Condition="'$(Configuration)'=='Release' And '$(PushIt)'=='True'">
-    <Exec Command="%userprofile%\.nuget\nuget.exe push &quot;$(OutputPath)$(PackageId).$(PackageVersion).nupkg&quot; -Source github" />
   </Target>
 </Project>
