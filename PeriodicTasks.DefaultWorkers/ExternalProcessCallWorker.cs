@@ -36,7 +36,7 @@ namespace PeriodicTasks.DefaultWorkers
         protected override object RunTask(PeriodicTask task, string command, Dictionary<StepParameter, object> values)
         {
             task.Log("Should have used the Async call!", LogMessageType.Error);
-            return AsyncHelpers.RunSync(async () => await RunTaskAsync(task, command, values));
+            return AsyncHelpers.RunSync(async () => await RunTaskAsync(task, command, values, null));
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace PeriodicTasks.DefaultWorkers
         /// <param name="command">the command that will be evaluated by this worker</param>
         /// <param name="values">the variables that hold results of previous steps</param>
         /// <returns>the result of the provided command</returns>
-        protected async override Task<object> RunTaskAsync(PeriodicTask task, string command, Dictionary<StepParameter, object> values)
+        protected async override Task<object> RunTaskAsync(PeriodicTask task, string command, Dictionary<StepParameter, object> values, IResourceLock @lock)
         {
             CommandLineParser cmd = new CommandLineParser(typeof(RunProcessArguments));
             RunProcessArguments args = new RunProcessArguments();

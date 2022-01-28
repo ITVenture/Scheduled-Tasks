@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.0-RC3</Version>
+    <Version>2.1.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
   </PropertyGroup>
@@ -12,14 +12,14 @@
     <Compile Update="Properties\Resources.Designer.cs" AutoGen="True" DependentUpon="Resources.resx" DesignTime="True" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.dataaccess" Version="2.1.0-RC5" />
-    <PackageReference Include="ITVComponents.Formatting" Version="2.1.0-RC5" />
-    <PackageReference Include="itvcomponents.interprocesscommunication.managementextensions" Version="2.1.0-RC5" />
-    <PackageReference Include="itvcomponents.interprocesscommunication.shared" Version="2.1.0-RC5" />
-    <PackageReference Include="itvcomponents.parallelprocessing" Version="2.1.0-RC5" />
-    <PackageReference Include="itvcomponents.plugins" Version="2.1.0-RC5" />
-    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="2.1.0-RC5" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="2.1.0-RC5" />
+    <PackageReference Include="itvcomponents.dataaccess" Version="2.1.0" />
+    <PackageReference Include="ITVComponents.Formatting" Version="2.1.0" />
+    <PackageReference Include="itvcomponents.interprocesscommunication.managementextensions" Version="2.1.0" />
+    <PackageReference Include="itvcomponents.interprocesscommunication.shared" Version="2.1.0" />
+    <PackageReference Include="itvcomponents.parallelprocessing" Version="2.1.0" />
+    <PackageReference Include="itvcomponents.plugins" Version="2.1.0" />
+    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="2.1.0" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

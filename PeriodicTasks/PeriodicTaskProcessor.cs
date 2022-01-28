@@ -69,10 +69,14 @@ namespace PeriodicTasks
                 }
 
                 PeriodicTasksEventInterceptor.InterceptTaskStarts(environment,task,variables);
-                NamedLock @lock = null;
+                IResourceLock @lock;
                 if (!string.IsNullOrEmpty(task.ExclusiveAreaName))
                 {
                     @lock = new NamedLock(task.ExclusiveAreaName);
+                }
+                else
+                {
+                    @lock = new ResourceLock(new object());
                 }
 
                 try
@@ -110,15 +114,19 @@ namespace PeriodicTasks
                                     throw new Exception("Requested worker is not available. Check Configuration");
                                 }
 
-                                NamedLock innerLock = null;
+                                IResourceLock innerLock;
                                 if (!string.IsNullOrEmpty(step.ExclusiveAreaName))
                                 {
-                                    innerLock = new NamedLock(step.ExclusiveAreaName);
+                                    innerLock = new NamedLock(step.ExclusiveAreaName, @lock);
+                                }
+                                else
+                                {
+                                    innerLock = new ResourceLock(new object(), @lock);
                                 }
 
                                 try
                                 {
-                                    tmp = await worker.Run(task, step.Command, values);
+                                    tmp = await worker.Run(task, step.Command, values, innerLock);
                                 }
                                 finally
                                 {
