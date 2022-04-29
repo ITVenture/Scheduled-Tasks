@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using ITVComponents.Helpers;
 using ITVComponents.InterProcessCommunication.Shared.Helpers;
 using ITVComponents.Logging;
@@ -138,6 +139,16 @@ namespace PeriodicTasks
         /// Gets or sets the last result of this Task
         /// </summary>
         internal object LastResult { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this task is currently running
+        /// </summary>
+        internal bool Running { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this task is currently being configured
+        /// </summary>
+        internal bool Configuring { get; set; }
 
         /// <summary>
         /// Initializes a single-run for the given task
@@ -385,6 +396,22 @@ namespace PeriodicTasks
         internal void ClearLastResult()
         {
             LastResult = null;
+        }
+
+        /// <summary>
+        /// Waits for a pulse on the exclusive lock object
+        /// </summary>
+        internal void WaitExclusive()
+        {
+            Monitor.Wait(exclusiveLock);
+        }
+
+        /// <summary>
+        /// Pulses the exclusive lock object
+        /// </summary>
+        internal void PulseExclusive()
+        {
+            Monitor.Pulse(exclusiveLock);
         }
 
         /// <summary>

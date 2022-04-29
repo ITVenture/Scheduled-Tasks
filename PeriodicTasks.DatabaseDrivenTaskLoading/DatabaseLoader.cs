@@ -41,7 +41,7 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
         /// </summary>
         /// <param name="priority">the priority for which to load tasks</param>
         /// <param name="getTask">callback for getting the raw-task for a specific name, so it can be refreshed</param>
-        public void RefreshTasks(int priority, Func<string, Dictionary<string,object>, PeriodicTask> getTask)
+        public void RefreshTasks(int priority, Func<string, Dictionary<string,object>, PeriodicTask> getTask, Action<PeriodicTask> taskConfigured)
         {
             try
             {
@@ -65,38 +65,49 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
                                 new Dictionary<string, object>();
                             metaData.Add("PERIODICTASKID", result["periodicTaskId"]);
                             PeriodicTask tmp = getTask(result["Name"], metaData);
-                            lock (tmp)
+                            try
                             {
-
-                                result.ToModel<PeriodicTask, IPeriodicTask>(tmp);
-                                periodicTaskIdParam.Value = result["periodicTaskId"];
-                                SchedulerPolicy[] schedules =
-                                    database.GetResults<SchedulerPolicy, IPeriodicSchedule>(
-                                        "Select PeriodicScheduleId, SchedulerName from PeriodicSchedules where PeriodicTaskId = @periodicTaskId",
-                                        periodicTaskIdParam).ToArray();
-                                tmp.ConfigureSchedule(schedules);
-                                DynamicResult[] steps =
-                                    database.GetNativeResults(
-                                        string.Format(
-                                            "Select * from PeriodicSteps where periodicTaskId = {0} order by StepOrder",
-                                            periodicTaskIdParam.ParameterName), null, periodicTaskIdParam);
-                                TaskStep[] taskSteps = steps.GetModelResult<DbTaskStep, ITaskStep>().ToArray();
-                                for (int i = 0; i < steps.Length; i++)
+                                using (var lk = tmp.DemandExclusive())
                                 {
-                                    periodicStepIdParam.Value = steps[i]["PeriodicStepId"];
-                                    taskSteps[i].Parameters =
-                                        database.GetResults<StepParameter, IStepParameter>(
-                                            string.Format(
-                                                "Select * from PeriodicStepParameters where PeriodicStepId = {0} and ParameterName not like '##%'",
-                                                periodicStepIdParam.ParameterName), periodicStepIdParam).ToArray();
-                                    var runCondition = database.GetResults<StepParameter, IStepParameter>(
-                                        string.Format(
-                                            "Select * from PeriodicStepParameters where PeriodicStepId = {0} and ParameterName = '##RUNCONDITION'",
-                                            periodicStepIdParam.ParameterName), periodicStepIdParam).FirstOrDefault();
-                                    taskSteps[i].RunCondition = runCondition?.Value;
-                                }
+                                    lk.Exclusive(() =>
+                                    {
+                                        result.ToModel<PeriodicTask, IPeriodicTask>(tmp);
+                                        periodicTaskIdParam.Value = result["periodicTaskId"];
+                                        SchedulerPolicy[] schedules =
+                                            database.GetResults<SchedulerPolicy, IPeriodicSchedule>(
+                                                "Select PeriodicScheduleId, SchedulerName from PeriodicSchedules where PeriodicTaskId = @periodicTaskId",
+                                                periodicTaskIdParam).ToArray();
+                                        tmp.ConfigureSchedule(schedules);
+                                        DynamicResult[] steps =
+                                            database.GetNativeResults(
+                                                string.Format(
+                                                    "Select * from PeriodicSteps where periodicTaskId = {0} order by StepOrder",
+                                                    periodicTaskIdParam.ParameterName), null, periodicTaskIdParam);
+                                        TaskStep[] taskSteps = steps.GetModelResult<DbTaskStep, ITaskStep>().ToArray();
+                                        for (int i = 0; i < steps.Length; i++)
+                                        {
+                                            periodicStepIdParam.Value = steps[i]["PeriodicStepId"];
+                                            taskSteps[i].Parameters =
+                                                database.GetResults<StepParameter, IStepParameter>(
+                                                        string.Format(
+                                                            "Select * from PeriodicStepParameters where PeriodicStepId = {0} and ParameterName not like '##%'",
+                                                            periodicStepIdParam.ParameterName), periodicStepIdParam)
+                                                    .ToArray();
+                                            var runCondition = database.GetResults<StepParameter, IStepParameter>(
+                                                    string.Format(
+                                                        "Select * from PeriodicStepParameters where PeriodicStepId = {0} and ParameterName = '##RUNCONDITION'",
+                                                        periodicStepIdParam.ParameterName), periodicStepIdParam)
+                                                .FirstOrDefault();
+                                            taskSteps[i].RunCondition = runCondition?.Value;
+                                        }
 
-                                tmp.Steps = taskSteps;
+                                        tmp.Steps = taskSteps;
+                                    });
+                                }
+                            }
+                            finally
+                            {
+                                taskConfigured(tmp);
                             }
                         }
                     }
@@ -108,7 +119,7 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
             }
         }
 
-        public PeriodicTask GetRunOnceTask(string name, Func<string, Dictionary<string, object>, PeriodicTask> getTask)
+        public PeriodicTask GetRunOnceTask(string name, Func<string, Dictionary<string, object>, PeriodicTask> getTask, Action<PeriodicTask> taskConfigured)
         {
             try
             {
@@ -162,6 +173,7 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
                             tmp.Steps = taskSteps;
                         }
 
+                        taskConfigured(tmp);
                         return tmp;
                     }
                 }

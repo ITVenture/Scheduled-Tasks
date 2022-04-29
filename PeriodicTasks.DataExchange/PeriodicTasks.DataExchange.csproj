@@ -2,17 +2,17 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0-windows;netcoreapp3.1</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.0</Version>
+    <Version>2.1.1-PRE003</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
+    <RepositoryUrl>tmphttps://github.com/ITVenture/PeriodicTasks</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ITVComponents.CommandLineParser" Version="2.1.0" />
-    <PackageReference Include="ITVComponents.DataExchange" Version="2.1.0" />
-    <PackageReference Include="ITVComponents.UserInterface" Version="2.1.0" />
+    <PackageReference Include="ITVComponents.CommandLineParser" Version="2.1.1-PRE079" />
+    <PackageReference Include="ITVComponents.DataExchange" Version="2.1.1-PRE079" />
+    <PackageReference Include="ITVComponents.UserInterface" Version="2.1.1-PRE079" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />

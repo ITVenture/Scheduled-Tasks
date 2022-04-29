@@ -192,7 +192,7 @@ namespace PeriodicTasks
                 var tmp = new PeriodicTask { Name = s };
                 tmp.SetMetaDataInformation(m);
                 return tmp;
-            });
+            }, t => { });
 
             t.Environment = this;
             t.InitSingleRun(arguments);
@@ -209,37 +209,64 @@ namespace PeriodicTasks
         private void RefreshTasks(object sender, GetMoreTasksEventArgs e)
         {
             List<PeriodicTask> newTasks = new List<PeriodicTask>();
+            int newTaskCounter = 0;
             taskLoader.RefreshTasks(e.Priority, (n, m) =>
-                                                    {
-                                                        var tmp =
-                                                            (from t in knownTasks
-                                                             where
-                                                                 (t.Name == n && t.TestMetaData(m)) ||
-                                                                 (m != null && m.Count != 0 && t.TestMetaData(m))
-                                                             select t)
-                                                                .FirstOrDefault();
-                                                        if (tmp == null)
-                                                        {
-                                                            tmp = new PeriodicTask() {Name = n};
-                                                            if (m != null)
-                                                            {
-                                                                tmp.SetMetaDataInformation(m);
-                                                            }
+            {
+                var tmp =
+                    (from t in knownTasks
+                        where
+                            (t.Name == n && t.TestMetaData(m)) ||
+                            (m != null && m.Count != 0 && t.TestMetaData(m))
+                        select t)
+                    .FirstOrDefault();
+                if (tmp == null)
+                {
+                    newTaskCounter++;
+                    tmp = new PeriodicTask() { Name = n };
+                    if (m != null)
+                    {
+                        tmp.SetMetaDataInformation(m);
+                    }
 
-                                                            lock (knownTasks)
-                                                            {
-                                                                knownTasks.Add(tmp);
-                                                            }
-                                                        }
+                    lock (knownTasks)
+                    {
+                        knownTasks.Add(tmp);
+                    }
+                }
 
-                                                        if (!tmp.Active)
-                                                        {
-                                                            newTasks.Add(tmp);
-                                                        }
+                using (var lk = tmp.DemandExclusive())
+                {
+                    lk.Exclusive(() =>
+                    {
+                        if (tmp.Running || tmp.Configuring)
+                        {
+                            tmp.WaitExclusive();
+                        }
 
-                                                        return tmp;
-                                                    });
+                        tmp.Configuring = true;
+                    });
+                }
 
+
+                if (!tmp.Active)
+                {
+                    newTasks.Add(tmp);
+                }
+
+                return tmp;
+            }, t =>
+            {
+                using (var lk = t.DemandExclusive())
+                {
+                    lk.Exclusive(() =>
+                    {
+                        t.Configuring = false;
+                        t.PulseExclusive();
+
+                    });
+                }
+            });
+            LogEnvironment.LogDebugEvent($"Found {newTaskCounter} new Tasks ({newTasks.Count} in newTasks-list).", LogSeverity.Report);
             for (int index = 0; index < newTasks.Count; index++)
             {
                 PeriodicTask t = newTasks[index];

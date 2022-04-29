@@ -96,7 +96,7 @@ namespace PeriodicTasks.AppConfigBasedTaskLoading
         /// </summary>
         /// <param name="priority">the priority for which to load tasks</param>
         /// <param name="getTask">callback for getting the raw-task for a specific name, so it can be refreshed</param>
-        public void RefreshTasks(int priority, Func<string, Dictionary<string,object>, PeriodicTask> getTask)
+        public void RefreshTasks(int priority, Func<string, Dictionary<string,object>, PeriodicTask> getTask, Action<PeriodicTask> taskConfigured)
         {
             lock (configuringLock)
             {
@@ -133,29 +133,36 @@ namespace PeriodicTasks.AppConfigBasedTaskLoading
                 foreach (TaskDefinition def in tasks.Where(t => t.Priority == priority))
                 {
                     PeriodicTask target = getTask(def.TaskName, null);
-                    target.Active = def.Active;
-                    target.Configure(def.Priority, def.Schedules.ToArray(), def.Description, def.ExclusiveAreaName);
-                    target.Steps = (from t in def.Steps
-                        orderby t.Order
-                        select new TaskStep
-                        {
-                            Command = t.Command,
-                            Order = t.Order,
-                            OutputVariable = t.OutputVariable,
-                            StepName = t.Name,
-                            StepWorkerName = t.WorkerName,
-                            RunCondition = t.RunCondition,
-                            ExclusiveAreaName = t.ExclusiveAreaName,
-                            Parameters = (from u in t.Parameters
-                                select
-                                    new StepParameter
-                                    {
-                                        ParameterName = u.ParameterName,
-                                        ParameterSettings = u.ParameterSettings,
-                                        ParameterType = u.ParameterType,
-                                        Value = u.Value
-                                    }).ToArray()
-                        }).ToArray();
+                    try
+                    {
+                        target.Active = def.Active;
+                        target.Configure(def.Priority, def.Schedules.ToArray(), def.Description, def.ExclusiveAreaName);
+                        target.Steps = (from t in def.Steps
+                            orderby t.Order
+                            select new TaskStep
+                            {
+                                Command = t.Command,
+                                Order = t.Order,
+                                OutputVariable = t.OutputVariable,
+                                StepName = t.Name,
+                                StepWorkerName = t.WorkerName,
+                                RunCondition = t.RunCondition,
+                                ExclusiveAreaName = t.ExclusiveAreaName,
+                                Parameters = (from u in t.Parameters
+                                    select
+                                        new StepParameter
+                                        {
+                                            ParameterName = u.ParameterName,
+                                            ParameterSettings = u.ParameterSettings,
+                                            ParameterType = u.ParameterType,
+                                            Value = u.Value
+                                        }).ToArray()
+                            }).ToArray();
+                    }
+                    finally
+                    {
+                        taskConfigured(target);
+                    }
                 }
             }
             finally
@@ -168,7 +175,7 @@ namespace PeriodicTasks.AppConfigBasedTaskLoading
             }
         }
 
-        public PeriodicTask GetRunOnceTask(string name, Func<string, Dictionary<string, object>, PeriodicTask> getTask)
+        public PeriodicTask GetRunOnceTask(string name, Func<string, Dictionary<string, object>, PeriodicTask> getTask, Action<PeriodicTask> taskConfigured)
         {
             lock (configuringLock)
             {
@@ -231,6 +238,7 @@ namespace PeriodicTasks.AppConfigBasedTaskLoading
                                                           }).ToArray()
                                     }).ToArray();
 
+                    taskConfigured(target);
                     return target;
                 }
             }

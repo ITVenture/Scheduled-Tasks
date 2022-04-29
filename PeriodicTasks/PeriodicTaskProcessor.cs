@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using ITVComponents.Logging;
 using ITVComponents.ParallelProcessing;
 using ITVComponents.Scripting.CScript.Core;
 using ITVComponents.Scripting.CScript.Helpers;
 using ITVComponents.Threading;
+using Microsoft.CodeAnalysis;
 using PeriodicTasks.Events;
 using Mutex = System.Threading.Mutex;
 
@@ -57,124 +60,167 @@ namespace PeriodicTasks
         /// Processes a specific task
         /// </summary>
         /// <param name="task">a task that was fetched from a priority queue</param>
-        public async override Task ProcessAsync(PeriodicTask task)
+        public override async Task ProcessAsync(PeriodicTask task)
         {
             if (task != null)
             {
-                task.ClearLastResult();
-                Dictionary<string, object> variables = new Dictionary<string, object>();
-                if (task.SingleRun)
+                if (currentTask == null)
                 {
-                    task.InitSingleRun(variables);
-                }
-
-                PeriodicTasksEventInterceptor.InterceptTaskStarts(environment,task,variables);
-                IResourceLock @lock;
-                if (!string.IsNullOrEmpty(task.ExclusiveAreaName))
-                {
-                    @lock = new NamedLock(task.ExclusiveAreaName);
-                }
-                else
-                {
-                    @lock = new ResourceLock(new object());
-                }
-
-                try
-                {
-                    TaskStep[] steps;
-                    lock (task)
+                    currentTask = task;
+                    try
                     {
-                        steps = task.Steps;
-                    }
+                        task.ClearLastResult();
+                        TaskStep[] steps;
+                        using (var lk = task.DemandExclusive())
+                        {
+                            steps = lk.Exclusive(() =>
+                            {
+                                if (task.Running)
+                                {
+                                    LogEnvironment.LogEvent("Possible double-run detected!", LogSeverity.Error);
+                                    task.WaitExclusive();
+                                }
+                                else if (task.Configuring)
+                                {
+                                    task.WaitExclusive();
+                                }
 
-                    Dictionary<StepParameter, object> values = new Dictionary<StepParameter, object>();
-                    int stepCount = steps.Count();
-                    int currentStep = 1;
-                    object tmp = null;
-                    foreach (TaskStep step in steps)
-                    {
-                        tmp = null;
+                                task.Running = true;
+                                return task.Steps;
+                            });
+                        }
+
+                        Dictionary<string, object> variables = new Dictionary<string, object>();
+                        if (task.SingleRun)
+                        {
+                            task.InitSingleRun(variables);
+                        }
+
+                        PeriodicTasksEventInterceptor.InterceptTaskStarts(environment, task, variables);
+                        IResourceLock @lock;
+                        if (!string.IsNullOrEmpty(task.ExclusiveAreaName))
+                        {
+                            @lock = new NamedLock(task.ExclusiveAreaName);
+                        }
+                        else
+                        {
+                            @lock = new ResourceLock(new object());
+                        }
+
                         try
                         {
-                            if ((bool) ExpressionParser.Parse(step.RunCondition ?? "true", variables, a => { DefaultCallbacks.PrepareDefaultCallbacks(a.Scope, a.ReplSession); }))
+                            Dictionary<StepParameter, object> values = new Dictionary<StepParameter, object>();
+                            int stepCount = steps.Count();
+                            int currentStep = 1;
+                            object tmp = null;
+                            foreach (TaskStep step in steps)
                             {
-                                PeriodicTasksEventInterceptor.InterceptBeforeTaskStep(environment, task, step,
-                                    currentStep,
-                                    stepCount, variables);
-                                values.Clear();
-                                foreach (StepParameter param in step.Parameters)
-                                {
-                                    values.Add(param, GetValue(task, param, variables));
-                                }
-
-
-                                StepWorker worker = StepWorker.GetWorker(step.StepWorkerName);
-                                if (worker == null)
-                                {
-                                    throw new Exception("Requested worker is not available. Check Configuration");
-                                }
-
-                                IResourceLock innerLock;
-                                if (!string.IsNullOrEmpty(step.ExclusiveAreaName))
-                                {
-                                    innerLock = new NamedLock(step.ExclusiveAreaName, @lock);
-                                }
-                                else
-                                {
-                                    innerLock = new ResourceLock(new object(), @lock);
-                                }
-
+                                tmp = null;
                                 try
                                 {
-                                    tmp = await worker.Run(task, step.Command, values, innerLock);
+                                    if ((bool)ExpressionParser.Parse(step.RunCondition ?? "true", variables,
+                                            a => { DefaultCallbacks.PrepareDefaultCallbacks(a.Scope, a.ReplSession); }))
+                                    {
+                                        PeriodicTasksEventInterceptor.InterceptBeforeTaskStep(environment, task, step,
+                                            currentStep,
+                                            stepCount, variables);
+                                        values.Clear();
+                                        foreach (StepParameter param in step.Parameters)
+                                        {
+                                            values.Add(param, GetValue(task, param, variables));
+                                        }
+
+
+                                        StepWorker worker = StepWorker.GetWorker(step.StepWorkerName);
+                                        if (worker == null)
+                                        {
+                                            throw new Exception(
+                                                "Requested worker is not available. Check Configuration");
+                                        }
+
+                                        IResourceLock innerLock;
+                                        if (!string.IsNullOrEmpty(step.ExclusiveAreaName))
+                                        {
+                                            innerLock = new NamedLock(step.ExclusiveAreaName, @lock);
+                                        }
+                                        else
+                                        {
+                                            innerLock = new ResourceLock(new object(), @lock);
+                                        }
+
+                                        try
+                                        {
+                                            tmp = await worker.Run(task, step.Command, values, innerLock);
+                                        }
+                                        finally
+                                        {
+                                            innerLock?.Dispose();
+                                        }
+
+                                        if (tmp is PlannedTermination)
+                                        {
+                                            PeriodicTasksEventInterceptor.InterceptTaskTerminatesPlanned(environment,
+                                                task);
+                                            break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        PeriodicTasksEventInterceptor.InterceptTaskTerminationDueToRunCondition(
+                                            environment,
+                                            task, step, currentStep, stepCount);
+                                        break;
+                                    }
                                 }
                                 finally
                                 {
-                                    innerLock?.Dispose();
+                                    variables[step.OutputVariable] = tmp;
+                                    PeriodicTasksEventInterceptor.InterceptAfterTaskStep(environment, task, step,
+                                        currentStep,
+                                        stepCount, tmp, variables);
+                                    currentStep++;
                                 }
+                            }
 
-                                if (tmp is PlannedTermination)
-                                {
-                                    PeriodicTasksEventInterceptor.InterceptTaskTerminatesPlanned(environment, task);
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                PeriodicTasksEventInterceptor.InterceptTaskTerminationDueToRunCondition(environment,
-                                    task, step, currentStep, stepCount);
-                                break;
-                            }
+                            task.LastResult = tmp;
+                            task.Succeeded();
+                        }
+                        catch (Exception ex)
+                        {
+                            task.Fail(ex);
                         }
                         finally
                         {
-                            variables[step.OutputVariable] = tmp;
-                            PeriodicTasksEventInterceptor.InterceptAfterTaskStep(environment, task, step, currentStep,
-                                stepCount, tmp, variables);
-                            currentStep++;
+                            @lock?.Dispose();
+                            if (!task.Success)
+                            {
+                                PeriodicTasksEventInterceptor.InterceptTaskEndsWithError(environment, task, variables);
+                            }
+
+                            PeriodicTasksEventInterceptor.InterceptTaskEnds(environment, task, variables);
+                            if (!task.SingleRun && !environment.Requeue(task))
+                            {
+                                task.Fail("Unable to requeue Task");
+                            }
                         }
                     }
-
-                    task.LastResult = tmp;
-                    task.Succeeded();
-                }
-                catch (Exception ex)
-                {
-                    task.Fail(ex);
-                }
-                finally
-                {
-                    @lock?.Dispose();
-                    if (!task.Success)
+                    finally
                     {
-                        PeriodicTasksEventInterceptor.InterceptTaskEndsWithError(environment, task, variables);
+                        currentTask = null;
+                        using (var lk = task.DemandExclusive())
+                        {
+                            lk.Exclusive(() =>
+                            {
+                                task.Running = false;
+                                task.PulseExclusive();
+                            });
+                        }
                     }
-
-                    PeriodicTasksEventInterceptor.InterceptTaskEnds(environment, task, variables);
-                    if (!task.SingleRun && !environment.Requeue(task))
-                    {
-                        task.Fail("Unable to requeue Task");
-                    }
+                }
+                else
+                {
+                    task.Fail("Unable to process task on the current worker");
+                    environment.Requeue(task);
                 }
             }
         }

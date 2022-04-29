@@ -16,13 +16,15 @@ namespace PeriodicTasks
         /// </summary>
         /// <param name="priority">the priority for which to load tasks</param>
         /// <param name="getTask">callback for getting the raw-task for a specific name, so it can be refreshed</param>
-        void RefreshTasks(int priority, Func<string, Dictionary<string,object>, PeriodicTask> getTask);
+        /// <param name="taskConfigured">must be called when the task has finished loading and is ready for processing</param>
+        void RefreshTasks(int priority, Func<string, Dictionary<string,object>, PeriodicTask> getTask, Action<PeriodicTask> taskConfigured);
 
         /// <summary>
         /// Gets the Task-Description for a specific task with a run-once configuration
         /// </summary>
         /// <param name="name">the name of the requested task</param>
         /// <param name="getTask">callback for getting the raw-task for a specific name, so it can be refreshed</param>
-        PeriodicTask GetRunOnceTask(string name, Func<string, Dictionary<string, object>, PeriodicTask> getTask);
+        /// <param name="taskConfigured">must be called when the task has finished loading and is ready for processing</param>
+        PeriodicTask GetRunOnceTask(string name, Func<string, Dictionary<string, object>, PeriodicTask> getTask, Action<PeriodicTask> taskConfigured);
     }
 }

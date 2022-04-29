@@ -3,7 +3,7 @@
     <LangVersion>8.0</LangVersion>
     <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.0</Version>
+    <Version>2.1.1-PRE003</Version>
     <RootNamespace>TaskSchedulerWeb</RootNamespace>
     <PackageId>PeriodicTasks.WebExtensions</PackageId>
     <Copyright>IT-Venture GmbH</Copyright>
@@ -11,7 +11,7 @@
     <RazorCompileOnBuild>true</RazorCompileOnBuild>
     <Authors>IT-Venture GmbH</Authors>
     <Product>PeriodicTasks</Product>
-    <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
+    <RepositoryUrl>tmphttps://github.com/ITVenture/PeriodicTasks</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
@@ -19,9 +19,9 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="2.1.0" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="2.1.0" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.Net.TelerikUi" Version="2.1.0" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="2.1.1-PRE079" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="2.1.1-PRE079" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.Net.TelerikUi" Version="2.1.1-PRE079" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks.DbContext\PeriodicTasks.DbContext.csproj" />

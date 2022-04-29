@@ -2,9 +2,9 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.0</Version>
+    <Version>2.1.1-PRE003</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
+    <RepositoryUrl>tmphttps://github.com/ITVenture/PeriodicTasks</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
