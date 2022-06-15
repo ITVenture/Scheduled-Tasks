@@ -736,12 +736,6 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
             return PartialView();
         }
 
-        private ServiceContextConnector GetScheduler(PluginFactory factory)
-        {
-            
-            return (ServiceContextConnector)factory[ConfigurationManager.AppSettings["PeriodicContextProviderName"], true];
-        }
-
         private void AssignMonth(string Month, PeriodicMonth pw, bool isActive)
         {
             switch (Month.ToLower())

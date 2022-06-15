@@ -1,22 +1,28 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0-PRE001</Version>
+    <Version>2.1.1-PRE003</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
+    <RepositoryUrl>tmphttps://github.com/ITVenture/PeriodicTasks</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Properties\**" />
-    <EmbeddedResource Remove="Properties\**" />
-    <None Remove="Properties\**" />
+    <!-- Resources -->
+    <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <Compile Update="Properties\Resources.Designer.cs" AutoGen="True" DependentUpon="Resources.resx" DesignTime="True" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="itvcomponents.dataaccess" Version="3.0.0-PRV001" />
     <PackageReference Include="ITVComponents.Formatting" Version="3.0.0-PRV001" />
+    <PackageReference Include="itvcomponents.interprocesscommunication.managementextensions" Version="3.0.0-PRV001" />
+    <PackageReference Include="itvcomponents.interprocesscommunication.shared" Version="3.0.0-PRV001" />
     <PackageReference Include="itvcomponents.parallelprocessing" Version="3.0.0-PRV001" />
     <PackageReference Include="itvcomponents.plugins" Version="3.0.0-PRV001" />
     <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.0.0-PRV001" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.0.0-PRE1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />
