@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0-PRE001</Version>
+    <Version>3.0.0-PRE002</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!--TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);IncludeReferencedProjectInPackage</TargetsForTfmSpecificContentInPackage-->
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
@@ -13,9 +13,9 @@
     <None Remove="Mvc\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.efrepo" Version="3.0.0-PRV001" />
-    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.0.0-PRV001" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.0.0-PRV001" />
+    <PackageReference Include="itvcomponents.efrepo" Version="3.0.0-PRV002" />
+    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.0.0-PRV002" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.0.0-PRV002" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.6" />
     <PackageReference Include="microsoft.entityframeworkcore.design" Version="6.0.6">
       <PrivateAssets>all</PrivateAssets>
