@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0-windows</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0-PRE002</Version>
+    <Version>3.0.0-PRE003</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
   </PropertyGroup>
@@ -10,9 +10,9 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ITVComponents.CommandLineParser" Version="3.0.0-PRV002" />
-    <PackageReference Include="ITVComponents.DataExchange" Version="3.0.0-PRV002" />
-    <PackageReference Include="ITVComponents.UserInterface" Version="3.0.0-PRV002" />
+    <PackageReference Include="ITVComponents.CommandLineParser" Version="3.0.0-PRV048" />
+    <PackageReference Include="ITVComponents.DataExchange" Version="3.0.0-PRV048" />
+    <PackageReference Include="ITVComponents.UserInterface" Version="3.0.0-PRV048" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />
