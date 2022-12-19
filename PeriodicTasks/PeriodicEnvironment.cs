@@ -52,11 +52,6 @@ namespace PeriodicTasks
         private List<PeriodicTask> knownTasks = new List<PeriodicTask>();
 
         /// <summary>
-        /// Holds the initially loaded queue-status
-        /// </summary>
-        private RuntimeInformation queueStatus;
-
-        /// <summary>
         /// Initializes static members of the PeriodicEnvironment class
         /// </summary>
         static PeriodicEnvironment()
@@ -144,18 +139,8 @@ namespace PeriodicTasks
                 processor = new ParallelTaskProcessor<PeriodicTask>(this.UniqueName + "TaskProcessor", () => new PeriodicTaskProcessor(this), 1, priorityCount,
                     workerCount, workerPollTime, workerCount - 1,
                     workerCount + 2, false, false, true);
-                processor.IntegratePendingTask += IntegrateTask;
                 processor.GetMoreTasks += RefreshTasks;
-                if (queueStatus != null)
-                {
-                    processor.LoadRuntimeStatus(queueStatus);
-                }
-                else
-                {
-                    processor.InitializeWithoutRuntimeInformation();
-                }
-
-                processor.RuntimeReady();
+                processor.Initialize();
                 Initialized = true;
             }
         }
@@ -321,45 +306,6 @@ namespace PeriodicTasks
         }
 
         /// <summary>
-        /// Gets the Runtime information required to restore the status when the application restarts
-        /// </summary>
-        /// <returns>an object serializer containing all required data for object re-construction on application reboot</returns>
-        public RuntimeInformation GetPostDisposalSerializableStaus()
-        {
-            RuntimeInformation retVal = new RuntimeInformation();
-            if (Initialized)
-            {
-                retVal.Add("QueueStatus", processor.GetPostDisposalSerializableStaus());
-            }
-
-            return retVal;
-        }
-
-        /// <summary>
-        /// Applies Runtime information that was loaded from a file
-        /// </summary>
-        /// <param name="runtimeInformation">the runtime information describing the status of this object before the last shutdown</param>
-        public void LoadRuntimeStatus(RuntimeInformation runtimeInformation)
-        {
-            queueStatus = runtimeInformation["QueueStatus"] as RuntimeInformation;
-        }
-
-        /// <summary>
-        /// Allows this object to do required initializations when no runtime status is provided by the calling object
-        /// </summary>
-        public void InitializeWithoutRuntimeInformation()
-        {
-            queueStatus = null;
-        }
-
-        /// <summary>
-        /// Is called when the runtime is completly available and ready to run
-        /// </summary>
-        public void RuntimeReady()
-        {
-        }
-
-        /// <summary>
         /// Stops Processes that are running inside the current Plugin
         /// </summary>
         public void Stop()
@@ -367,20 +313,6 @@ namespace PeriodicTasks
             if (Initialized)
             {
                 processor.Stop();
-            }
-        }
-
-        /// <summary>
-        /// Integrates a pending task into the current runtime environment
-        /// </summary>
-        /// <param name="sender">the event-sender</param>
-        /// <param name="e">the event arguments</param>
-        private void IntegrateTask(object sender, IntegrationEventArgs e)
-        {
-            PeriodicTask t = e.Task as PeriodicTask;
-            if (t != null)
-            {
-                t.Environment = this;
             }
         }
 
@@ -397,5 +329,47 @@ namespace PeriodicTasks
         /// Informs a calling class of a Disposal of this Instance
         /// </summary>
         public event EventHandler Disposed;
+
+        /// <summary>
+        /// Removes a task from the list of known tasks or attempts to force a re-activation of it by explicitly setting it to inactive.
+        /// </summary>
+        /// <param name="task">a Task tha could not properly be re-queued by the task-worker</param>
+        public void UnRegisterTask(PeriodicTask task)
+        {
+            bool dispose = true;
+            try
+            {
+                lock (knownTasks)
+                {
+                    var t = knownTasks.FirstOrDefault(n => n == task || n.TestMetaData(task.BuildMetaData()));
+                    bool ok = false;
+                    if (t != null)
+                    {
+                        task.Log("Removing Task from list, so it can be re-fetched on next task-refresh.", LogMessageType.Report);
+                        ok = knownTasks.Remove(t);
+                    }
+
+                    if (!ok)
+                    {
+                        task.Log("Task was not found. Setting it to Inactive..", LogMessageType.Warning);
+                        dispose = false;
+                        task.Active = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                task.Log($"Failed to unregister task: {ex.Message}. Setting it to inactive", LogMessageType.Error);
+                dispose = false;
+                task.Active = false;
+            }
+            finally
+            {
+                if (dispose)
+                {
+                    task.Dispose();
+                }
+            }
+        }
     }
 }

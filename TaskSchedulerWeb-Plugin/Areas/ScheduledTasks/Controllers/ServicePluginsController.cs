@@ -5,23 +5,30 @@ using ITVComponents.DataAccess.Extensions;
 using ITVComponents.Plugins;
 using ITVComponents.Plugins.DatabaseDrivenConfiguration.Models;
 using ITVComponents.Plugins.PluginServices;
+using ITVComponents.WebCoreToolkit.Security;
 using ITVComponents.WebCoreToolkit.WebPlugins.InjectablePlugins;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using PeriodicTasks.DbContext;
 using PeriodicTasks.FrontendHelpers;
+using TaskSchedulerWeb.Options;
 
 namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
 {
     [Authorize(Policy = "HasPermission(PeriodicTask.View,PeriodicTask.Write)"), Area("ScheduledTasks")]
     public class ServicePluginsController : Controller
     {
+        private readonly IOptions<TaskUiOptions> uiOptions;
+        private readonly IPermissionScope currentScopeProvider;
         private TaskSchedulerContext context;
 
-        public ServicePluginsController(IInjectablePlugin<TaskSchedulerContext> db)
+        public ServicePluginsController(IInjectablePlugin<TaskSchedulerContext> db, IOptions<TaskUiOptions> uiOptions, IPermissionScope currentScopeProvider)
         {
+            this.uiOptions = uiOptions;
+            this.currentScopeProvider = currentScopeProvider;
             this.context = db.Instance;
         }
 
@@ -59,6 +66,11 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             plugin.LoadOrder = context.Plugins.Count();
+            if (uiOptions.Value.UseTenantSupport)
+            {
+                plugin.TenantId = currentScopeProvider.PermissionPrefix;
+            }
+
             context.Plugins.Add(plugin);
             context.SaveChanges();
 

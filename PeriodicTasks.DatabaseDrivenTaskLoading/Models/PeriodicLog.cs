@@ -1,10 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
 
-namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models	
+namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 {
-	public class PeriodicLog
+    [Index(nameof(TenantId), IsUnique = false, Name = "IX_LogMessageTenant")]
+    public class PeriodicLog
 	{
         [Key]
 	    public virtual int PeriodicLogId { get; set; }
@@ -18,6 +21,8 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 	    public virtual int MessageType { get; set; }
 
 	    public virtual DateTime LogTime { get; set; }
+
+		public virtual string? TenantId { get; set; }
 
         [ForeignKey("PeriodicRunId")]
 	    public virtual PeriodicRun PeriodicRun { get; set; }

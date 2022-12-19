@@ -167,7 +167,7 @@ namespace PeriodicTasks.MailLogger
                                                           (bool)
                                                           ExpressionParser.Parse(t.LogConditionExpression, variables,
                                                               a => { DefaultCallbacks.PrepareDefaultCallbacks(a.Scope, a.ReplSession); })
-                                                      select variables.FormatText(t.LogMessageFormat)));
+                                                      select variables.FormatText(t.LogMessageFormat, TextFormat.DefaultFormatPolicyWithPrimitives)));
                 using (SmtpClient client = new SmtpClient(cfg.MailServer, cfg.Port))
                 {
                     client.EnableSsl = cfg.UseSSL;

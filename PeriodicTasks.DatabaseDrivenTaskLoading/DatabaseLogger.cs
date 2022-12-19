@@ -18,20 +18,28 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
         /// </summary>
         private DatabaseConnectionBuffer connector;
 
+        private readonly string tenantName;
+
         /// <summary>
         /// Holds the current Steps of the given tasks
         /// </summary>
-        private Dictionary<int, TaskStep> currentSteps; 
+        private Dictionary<int, TaskStep> currentSteps;
 
         /// <summary>
         /// Initializes a new instance of the DatabaseLogger class
         /// </summary>
         /// <param name="environment">the Environment that executes the tasks that are logged by this instance</param>
         /// <param name="connector">the database connector that is used to log events</param>
-        public DatabaseLogger(PeriodicEnvironment environment, DatabaseConnectionBuffer connector) : base(environment)
+        /// <param name="tenantName">the tenant-name. this is required, when the system is used in a multi-tenant environment</param>
+        public DatabaseLogger(PeriodicEnvironment environment, DatabaseConnectionBuffer connector, string tenantName) : base(environment)
         {
             currentSteps = new Dictionary<int, TaskStep>();
             this.connector = connector;
+            this.tenantName = tenantName;
+        }
+
+        public DatabaseLogger(PeriodicEnvironment environment, DatabaseConnectionBuffer connector):this(environment, connector, null)
+        {
         }
 
         /// <summary>
@@ -212,10 +220,12 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
                 {
                     IDbDataParameter taskIdParam = database.GetParameter("periodicTaskId", taskId);
                     IDbDataParameter startTimeParam = database.GetParameter("startTime", DateTime.Now);
+                    IDbDataParameter tenantParam = database.GetParameter("tenantId",
+                        !string.IsNullOrEmpty(this.tenantName) ? this.tenantName : DBNull.Value);
                     runId =
                         database.ExecuteCommandScalar<int>(
-                            @"Insert into PeriodicRuns (periodicTaskId, startTime) values (@periodicTaskId, @startTime);
-select scope_identity()", taskIdParam, startTimeParam);
+                            @"Insert into PeriodicRuns (periodicTaskId, startTime, tenantId) values (@periodicTaskId, @startTime, @tenantId);
+select scope_identity()", taskIdParam, startTimeParam, tenantParam);
                     task.SetTemporaryValue("CurrentRunId", runId);
                 }
 
@@ -251,9 +261,11 @@ select scope_identity()", taskIdParam, startTimeParam);
             IDbDataParameter messageParam = database.GetParameter("message", message);
             IDbDataParameter typeParam = database.GetParameter("messageType", (int) type);
             IDbDataParameter logTimeParam = database.GetParameter("logTime", DateTime.Now);
+            IDbDataParameter tenantParam = database.GetParameter("tenantId",
+                !string.IsNullOrEmpty(this.tenantName) ? this.tenantName : DBNull.Value);
             database.ExecuteCommand(
-                "Insert into periodicLog (periodicRunId, periodicStepId, message, messageType, logTime) values (@periodicRunId, @periodicStepId, @message, @messageType, @logTime)",
-                runIdParam, stepIdParam, messageParam, typeParam, logTimeParam);
+                "Insert into periodicLog (periodicRunId, periodicStepId, message, messageType, logTime, tenantId) values (@periodicRunId, @periodicStepId, @message, @messageType, @logTime, @tenantId)",
+                runIdParam, stepIdParam, messageParam, typeParam, logTimeParam, tenantParam);
         }
 
         /// <summary>
@@ -270,9 +282,11 @@ select scope_identity()", taskIdParam, startTimeParam);
             retVal = taskRun == runId;
             if (retVal)
             {
-                database.ExecuteCommand("update PeriodicRuns set endTime = @endTime where periodicRunId = @runId",
+                database.ExecuteCommand("update PeriodicRuns set endTime = @endTime where periodicRunId = @runId and (tenantId = @tenantId or (tenantId is null and @tenantId is null))",
                     database.GetParameter("endTime", DateTime.Now),
-                    database.GetParameter("runId", runId));
+                    database.GetParameter("runId", runId),
+                    database.GetParameter("tenantId",
+                        !string.IsNullOrEmpty(this.tenantName) ? this.tenantName : DBNull.Value));
             }
 
             return retVal;

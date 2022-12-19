@@ -22,13 +22,25 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
         /// </summary>
         private IConnectionBuffer connector;
 
+        private readonly string tenantName;
+
         /// <summary>
         /// Initializes a new instance of the DatabaseLoader class
         /// </summary>
         /// <param name="connector">the database connection providing access to defined tasks</param>
-        public DatabaseLoader(IConnectionBuffer connector)
+        public DatabaseLoader(IConnectionBuffer connector):this(connector, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the DatabaseLoader class
+        /// </summary>
+        /// <param name="connector">the database connection providing access to defined tasks</param>
+        /// <param name="tenantName">the tenant-name when taskScheduler is used in a multi-tenant environment</param>
+        public DatabaseLoader(IConnectionBuffer connector, string tenantName)
         {
             this.connector = connector;
+            this.tenantName = tenantName;
         }
 
         /// <summary>
@@ -53,12 +65,14 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
                         IDbDataParameter priorityParam = database.GetParameter("priority", priority);
                         IDbDataParameter periodicTaskIdParam = database.GetParameter("periodicTaskId", 0);
                         IDbDataParameter periodicStepIdParam = database.GetParameter("periodicStepId", 0);
+                        IDbDataParameter tenantParam = database.GetParameter("tenantId",
+                            !string.IsNullOrEmpty(this.tenantName) ? this.tenantName : DBNull.Value);
                         DynamicResult[] original =
                             database.GetNativeResults(
-                                string.Format("Select * from PeriodicTasks where priority = {0}",
-                                    priorityParam.ParameterName),
+                                $@"Select * from PeriodicTasks where priority = {priorityParam.ParameterName} and
+({tenantParam.ParameterName}=tenantId or ({tenantParam.ParameterName} is null and tenantId is null))",
                                 null,
-                                priorityParam);
+                                priorityParam,tenantParam);
                         foreach (DynamicResult result in original)
                         {
                             Dictionary<string, object> metaData =
@@ -75,28 +89,26 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
                                         periodicTaskIdParam.Value = result["periodicTaskId"];
                                         SchedulerPolicy[] schedules =
                                             database.GetResults<SchedulerPolicy, IPeriodicSchedule>(
-                                                "Select PeriodicScheduleId, SchedulerName from PeriodicSchedules where PeriodicTaskId = @periodicTaskId",
-                                                periodicTaskIdParam).ToArray();
+                                                $@"Select PeriodicScheduleId, SchedulerName from PeriodicSchedules where PeriodicTaskId = {periodicTaskIdParam.ParameterName} and
+({tenantParam.ParameterName}=tenantId or ({tenantParam.ParameterName} is null and tenantId is null))",
+                                                periodicTaskIdParam, tenantParam).ToArray();
                                         tmp.ConfigureSchedule(schedules);
                                         DynamicResult[] steps =
                                             database.GetNativeResults(
-                                                string.Format(
-                                                    "Select * from PeriodicSteps where periodicTaskId = {0} order by StepOrder",
-                                                    periodicTaskIdParam.ParameterName), null, periodicTaskIdParam);
+                                                $@"Select * from PeriodicSteps where periodicTaskId = {periodicTaskIdParam.ParameterName} and
+({tenantParam.ParameterName}=tenantId or ({tenantParam.ParameterName} is null and tenantId is null)) order by StepOrder", null, periodicTaskIdParam, tenantParam);
                                         TaskStep[] taskSteps = steps.GetModelResult<DbTaskStep, ITaskStep>().ToArray();
                                         for (int i = 0; i < steps.Length; i++)
                                         {
                                             periodicStepIdParam.Value = steps[i]["PeriodicStepId"];
                                             taskSteps[i].Parameters =
                                                 database.GetResults<StepParameter, IStepParameter>(
-                                                        string.Format(
-                                                            "Select * from PeriodicStepParameters where PeriodicStepId = {0} and ParameterName not like '##%'",
-                                                            periodicStepIdParam.ParameterName), periodicStepIdParam)
+                                                        $@"Select * from PeriodicStepParameters where PeriodicStepId = {periodicStepIdParam.ParameterName} and ParameterName not like '##%' and
+({tenantParam.ParameterName}=tenantId or ({tenantParam.ParameterName} is null and tenantId is null))", periodicStepIdParam, tenantParam)
                                                     .ToArray();
                                             var runCondition = database.GetResults<StepParameter, IStepParameter>(
-                                                    string.Format(
-                                                        "Select * from PeriodicStepParameters where PeriodicStepId = {0} and ParameterName = '##RUNCONDITION'",
-                                                        periodicStepIdParam.ParameterName), periodicStepIdParam)
+                                                    $@"Select * from PeriodicStepParameters where PeriodicStepId = {periodicStepIdParam.ParameterName} and ParameterName = '##RUNCONDITION' and
+({tenantParam.ParameterName}=tenantId or ({tenantParam.ParameterName} is null and tenantId is null))", periodicStepIdParam, tenantParam)
                                                 .FirstOrDefault();
                                             taskSteps[i].RunCondition = runCondition?.Value;
                                         }
@@ -129,12 +141,15 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
                     IDbDataParameter nameParam = database.GetParameter("name", name);
                     IDbDataParameter periodicTaskIdParam = database.GetParameter("periodicTaskId", 0);
                     IDbDataParameter periodicStepIdParam = database.GetParameter("periodicStepId", 0);
+                    IDbDataParameter tenantParam = database.GetParameter("tenantId",
+                        !string.IsNullOrEmpty(this.tenantName) ? this.tenantName : DBNull.Value);
+
                     DynamicResult[] original =
                         database.GetNativeResults(
-                            string.Format("Select * from PeriodicTasks where name = {0}",
-                                nameParam.ParameterName),
+                            $@"Select * from PeriodicTasks where name = {nameParam.ParameterName} and
+({tenantParam.ParameterName}=tenantId or ({tenantParam.ParameterName} is null and tenantId is null))",
                             null,
-                            nameParam);
+                            nameParam, tenantParam);
                     DynamicResult result = original.FirstOrDefault();
                     if (result != null)
                     {
@@ -151,22 +166,19 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading
                             periodicTaskIdParam.Value = result["periodicTaskId"];
                             DynamicResult[] steps =
                                 database.GetNativeResults(
-                                    string.Format(
-                                        "Select * from PeriodicSteps where periodicTaskId = {0} order by StepOrder",
-                                        periodicTaskIdParam.ParameterName), null, periodicTaskIdParam);
+                                    $@"Select * from PeriodicSteps where periodicTaskId = {periodicTaskIdParam.ParameterName} and
+({tenantParam.ParameterName}=tenantId or ({tenantParam.ParameterName} is null and tenantId is null)) order by StepOrder", null, periodicTaskIdParam, tenantParam);
                             TaskStep[] taskSteps = steps.GetModelResult<DbTaskStep, ITaskStep>().ToArray();
                             for (int i = 0; i < steps.Length; i++)
                             {
                                 periodicStepIdParam.Value = steps[i]["PeriodicStepId"];
                                 taskSteps[i].Parameters =
                                     database.GetResults<StepParameter, IStepParameter>(
-                                        string.Format(
-                                            "Select * from PeriodicStepParameters where PeriodicStepId = {0} and ParameterName not like '##%'",
-                                            periodicStepIdParam.ParameterName), periodicStepIdParam).ToArray();
+                                        $@"Select * from PeriodicStepParameters where PeriodicStepId = {periodicStepIdParam.ParameterName} and ParameterName not like '##%' and
+({tenantParam.ParameterName}=tenantId or ({tenantParam.ParameterName} is null and tenantId is null))", periodicStepIdParam, tenantParam).ToArray();
                                 var runCondition = database.GetResults<StepParameter, IStepParameter>(
-                                    string.Format(
-                                        "Select * from PeriodicStepParameters where PeriodicStepId = {0} and ParameterName = '##RUNCONDITION'",
-                                        periodicStepIdParam.ParameterName), periodicStepIdParam).FirstOrDefault();
+                                    $@"Select * from PeriodicStepParameters where PeriodicStepId = {periodicStepIdParam.ParameterName} and ParameterName = '##RUNCONDITION' and
+({tenantParam.ParameterName}=tenantId or ({tenantParam.ParameterName} is null and tenantId is null))", periodicStepIdParam, tenantParam).FirstOrDefault();
                                 taskSteps[i].RunCondition = runCondition?.Value;
                             }
 

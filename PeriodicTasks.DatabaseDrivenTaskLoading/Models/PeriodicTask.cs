@@ -1,9 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 
-namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models	
+namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 {
-	public class PeriodicTask
+    [Index(nameof(TenantId), IsUnique = false, Name = "IX_TaskTenant")]
+    public class PeriodicTask
 	{
         [Key]
 	    public virtual int PeriodicTaskId { get; set; }
@@ -17,6 +20,8 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 	    public virtual int Priority { get; set; }
 
         public virtual string ExclusiveAreaName { get; set; }
+
+        public virtual string? TenantId { get; set; }
 
         public virtual ICollection<PeriodicStep> PeriodicSteps { get; } = new HashSet<PeriodicStep>();
 

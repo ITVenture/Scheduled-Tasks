@@ -201,6 +201,7 @@ namespace PeriodicTasks
                             if (!task.SingleRun && !environment.Requeue(task))
                             {
                                 task.Fail("Unable to requeue Task");
+                                environment.UnRegisterTask(task);
                             }
                         }
                     }

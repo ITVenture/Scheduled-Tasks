@@ -10,7 +10,7 @@ namespace PeriodicTasks.DbContext.Designer
             var optionsBuilder = new DbContextOptionsBuilder<TaskSchedulerContext>();
             optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=IWCSecurity;Trusted_Connection=True;");
 
-            return new TaskSchedulerContext(optionsBuilder.Options);
+            return new TaskSchedulerContext(optionsBuilder.Options, null);
         }
     }
 }

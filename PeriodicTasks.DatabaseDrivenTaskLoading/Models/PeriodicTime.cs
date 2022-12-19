@@ -1,9 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Linq;
 
-namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models	
+namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 {
-	public class PeriodicTime
+    [Index(nameof(TenantId), IsUnique = false, Name = "IX_ScheduleTimeTenant")]
+    public class PeriodicTime
 	{
         [Key]
 	    public virtual int PeriodicTimeId { get; set; }
@@ -11,6 +14,8 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 	    public virtual string Time { get; set; }
 
 	    public virtual int PeriodicScheduleId { get; set; }
+
+        public virtual string? TenantId { get; set; }
 
         [ForeignKey("PeriodicScheduleId")]
 	    public virtual PeriodicSchedule PeriodicSchedule { get; set; }

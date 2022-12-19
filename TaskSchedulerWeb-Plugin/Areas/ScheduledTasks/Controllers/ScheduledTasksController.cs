@@ -12,6 +12,7 @@ using ITVComponents.WebCoreToolkit.EntityFramework.DataAnnotations;
 using ITVComponents.WebCoreToolkit.EntityFramework.Extensions;
 using ITVComponents.WebCoreToolkit.EntityFramework.Helpers;
 using ITVComponents.WebCoreToolkit.MvcExtensions;
+using ITVComponents.WebCoreToolkit.Security;
 using ITVComponents.WebCoreToolkit.WebPlugins.InjectablePlugins;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
@@ -19,12 +20,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using PeriodicTasks;
+using PeriodicTasks.DatabaseDrivenTaskLoading.MetaData;
 using PeriodicTasks.DatabaseDrivenTaskLoading.Models;
 using PeriodicTasks.DbContext;
 using PeriodicTasks.FrontendHelpers;
 using PeriodicTasks.FrontendHelpers.Models;
 using PeriodicTasks.Remote;
+using TaskSchedulerWeb.Options;
 using PeriodicTask = PeriodicTasks.DatabaseDrivenTaskLoading.Models.PeriodicTask;
 
 namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
@@ -35,11 +39,15 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         private TaskSchedulerContext context;
         
         private IInjectablePlugin<ServiceContextConnector> serviceContext;
+        private readonly IOptions<TaskUiOptions> uiOptions;
+        private readonly IPermissionScope currentScopeProvider;
         private bool? connected;
 
-        public ScheduledTasksController(IInjectablePlugin<TaskSchedulerContext> db, IInjectablePlugin<ServiceContextConnector> serviceContext)
+        public ScheduledTasksController(IInjectablePlugin<TaskSchedulerContext> db, IInjectablePlugin<ServiceContextConnector> serviceContext, IOptions<TaskUiOptions> uiOptions, IPermissionScope currentScopeProvider)
         {
             this.serviceContext = serviceContext;
+            this.uiOptions = uiOptions;
+            this.currentScopeProvider = currentScopeProvider;
             this.context = db.Instance;
         }
 
@@ -182,6 +190,10 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         public ActionResult InsertScheduledTask([DataSourceRequest] DataSourceRequest request, PeriodicTask periodictask)
         {
 
+            if (uiOptions.Value.UseTenantSupport)
+            {
+                periodictask.TenantId = currentScopeProvider.PermissionPrefix;
+            }
 
             context.PeriodicTasks.Add(periodictask);
             context.SaveChanges();
@@ -280,6 +292,11 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             periodictime.PeriodicScheduleId = pPeriodicScheduleId;
+            if (uiOptions.Value.UseTenantSupport)
+            {
+                periodictime.TenantId = currentScopeProvider.PermissionPrefix;
+            }
+
             context.PeriodicTimes.Add(periodictime);
             context.SaveChanges();
 
@@ -342,6 +359,11 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             periodicmonthday.PeriodicScheduleId = pPeriodicScheduleId;
+            if (uiOptions.Value.UseTenantSupport)
+            {
+                periodicmonthday.TenantId = currentScopeProvider.PermissionPrefix;
+            }
+
             context.PeriodicMonthdays.Add(periodicmonthday);
             context.SaveChanges();
 
@@ -387,6 +409,11 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
                 PeriodicMonth pw = new PeriodicMonth();
                 AssignMonth(Month, pw, isActive);
                 pw.PeriodicScheduleId = PeriodicScheduleId;
+                if (uiOptions.Value.UseTenantSupport)
+                {
+                    pw.TenantId = currentScopeProvider.PermissionPrefix;
+                }
+
                 context.PeriodicMonths.Add(pw);
             }
             else
@@ -407,6 +434,11 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
                 PeriodicWeekday pw = new PeriodicWeekday();
                 AssignDay(Day, pw, isActive);
                 pw.PeriodicScheduleId = PeriodicScheduleId;
+                if (uiOptions.Value.UseTenantSupport)
+                {
+                    pw.TenantId = currentScopeProvider.PermissionPrefix;
+                }
+
                 context.PeriodicWeekDays.Add(pw);
             }
             else
@@ -452,6 +484,11 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             periodicStepParameter.PeriodicStepId = pPeriodicStepId;
+            if (uiOptions.Value.UseTenantSupport)
+            {
+                periodicStepParameter.TenantId = currentScopeProvider.PermissionPrefix;
+            }
+
             context.PeriodicStepParameters.Add(periodicStepParameter);
             context.SaveChanges();
 
@@ -518,6 +555,11 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             periodicschedule.PeriodicTaskId = pPeriodicTaskId;
+            if (uiOptions.Value.UseTenantSupport)
+            {
+                periodicschedule.TenantId = currentScopeProvider.PermissionPrefix;
+            }
+
             context.PeriodicSchedules.Add(periodicschedule);
             context.SaveChanges();
 
@@ -634,6 +676,11 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
             periodicStep.PeriodicTaskId = pPeriodicTaskId;
             periodicStep.StepOrder = context.PeriodicSteps.Count(n => n.PeriodicTaskId == periodicStep.PeriodicTaskId);
+            if (uiOptions.Value.UseTenantSupport)
+            {
+                periodicStep.TenantId = currentScopeProvider.PermissionPrefix;
+            }
+
             context.PeriodicSteps.Add(periodicStep);
             context.SaveChanges();
 

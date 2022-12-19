@@ -1,14 +1,19 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Linq;
 
 namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models	
 {
-	public class PeriodicMonth
+    [Index(nameof(TenantId), IsUnique = false, Name = "IX_ScheduleMonthTenant")]
+    public class PeriodicMonth
 	{
         [Key]
 	    public virtual int PeriodicMonthId { get; set; }
 
 	    public virtual int PeriodicScheduleId { get; set; }
+
+        public virtual string? TenantId { get; set; }
 
         public virtual bool Jan { get; set; }
 

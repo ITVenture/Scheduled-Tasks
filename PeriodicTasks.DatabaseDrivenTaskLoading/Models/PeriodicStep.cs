@@ -1,10 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Linq;
 
-namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models	
+namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 {
-	public class PeriodicStep
+    [Index(nameof(TenantId), IsUnique = false, Name = "IX_StepTenant")]
+    public class PeriodicStep
 	{
         [Key]
 	    public virtual int PeriodicStepId { get; set; }
@@ -22,6 +25,8 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 	    public virtual int StepOrder { get; set; }
 
         public virtual string ExclusiveAreaName { get; set; }
+
+        public virtual string? TenantId { get; set; }
 
         [ForeignKey("PeriodicTaskId")]
 	    public virtual PeriodicTask PeriodicTask { get; set; }

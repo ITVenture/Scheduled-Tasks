@@ -11,6 +11,7 @@ using ITVComponents.DataAccess;
 using ITVComponents.ExtendedFormatting;
 using ITVComponents.Formatting;
 using ITVComponents.Plugins.SelfRegistration;
+using ITVComponents.Scripting.CScript.Security;
 using ITVComponents.Settings;
 using ITVComponents.Security;
 using PeriodicTasks.Remote;
@@ -184,7 +185,7 @@ Attachments:
             }*/
             var cfg = new KeyValueHelper(values);
 
-            return cfg.FormatText(mailTextBody.Substring(1));
+            return cfg.FormatText(mailTextBody.Substring(1), ScriptingPolicy.Default);
         }
 
         /// <summary>

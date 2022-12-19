@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0-PRE003</Version>
+    <Version>3.0.0-PRE008</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!--TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);IncludeReferencedProjectInPackage</TargetsForTfmSpecificContentInPackage-->
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
@@ -13,15 +13,15 @@
     <None Remove="Mvc\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.efrepo" Version="3.0.0-PRV048" />
-    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.0.0-PRV048" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.0.0-PRV048" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.7" />
-    <PackageReference Include="microsoft.entityframeworkcore.design" Version="6.0.7">
+    <PackageReference Include="itvcomponents.efrepo" Version="3.0.0-PRV140" />
+    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.0.0-PRV140" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.0.0-PRV140" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
+    <PackageReference Include="microsoft.entityframeworkcore.design" Version="6.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.10" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks.DatabaseDrivenTaskLoading\PeriodicTasks.DatabaseDrivenTaskLoading.csproj" />

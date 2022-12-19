@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0-PRE003</Version>
+    <Version>3.0.0-PRE008</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
   </PropertyGroup>
@@ -12,11 +12,11 @@
     <None Remove="Properties\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.dataaccess" Version="3.0.0-PRV048" />
-    <PackageReference Include="ITVComponents.Formatting" Version="3.0.0-PRV048" />
-    <PackageReference Include="itvcomponents.parallelprocessing" Version="3.0.0-PRV048" />
-    <PackageReference Include="itvcomponents.plugins" Version="3.0.0-PRV048" />
-    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.0.0-PRV048" />
+    <PackageReference Include="itvcomponents.dataaccess" Version="3.0.0-PRV140" />
+    <PackageReference Include="ITVComponents.Formatting" Version="3.0.0-PRV140" />
+    <PackageReference Include="itvcomponents.parallelprocessing" Version="3.0.0-PRV140" />
+    <PackageReference Include="itvcomponents.plugins" Version="3.0.0-PRV140" />
+    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.0.0-PRV140" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />

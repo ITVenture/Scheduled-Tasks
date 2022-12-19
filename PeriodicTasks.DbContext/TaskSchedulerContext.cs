@@ -1,6 +1,7 @@
 ﻿using System;
 using ITVComponents.EFRepo.Extensions;
 using ITVComponents.Plugins.DatabaseDrivenConfiguration.Models;
+using ITVComponents.WebCoreToolkit.Security;
 using ITVComponents.WebCoreToolkit.WebPlugins.InjectablePlugins;
 using Microsoft.EntityFrameworkCore;
 using PeriodicTasks.DatabaseDrivenTaskLoading.Models;
@@ -10,14 +11,21 @@ namespace PeriodicTasks.DbContext
     [ScopedDependency(FriendlyName = "TaskSchedulerContext")]
     public class TaskSchedulerContext:Microsoft.EntityFrameworkCore.DbContext, ITaskSchedulerContext
     {
-        public TaskSchedulerContext(DbContextOptions options) : base(options)
+        private readonly IPermissionScope targetScope;
+
+        public TaskSchedulerContext(DbContextOptions options, IPermissionScope targetScope) : base(options)
         {
+            this.targetScope = targetScope;
         }
 
-        public TaskSchedulerContext(string connectionString) : base(new DbContextOptionsBuilder().UseSqlServer(connectionString).Options)
+        public TaskSchedulerContext(string connectionString, IPermissionScope targetScope, bool useTenantFilter) : this(new DbContextOptionsBuilder().UseSqlServer(connectionString).Options, targetScope)
         {
-
+            UseTenantFilter = useTenantFilter;
         }
+
+        public string CurrentTenant => UseTenantFilter ? targetScope?.PermissionPrefix : null;
+
+        public bool UseTenantFilter { get; set; }
         
         /// <summary>Gets or sets the UniqueName of this Plugin</summary>
         public string UniqueName { get; set; }
@@ -47,6 +55,17 @@ namespace PeriodicTasks.DbContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<PeriodicLog>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<PeriodicMonthday>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<PeriodicMonth>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<PeriodicRun>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<PeriodicSchedule>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<PeriodicStepParameter>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<PeriodicStep>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<DatabaseDrivenTaskLoading.Models.PeriodicTask>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<PeriodicTime>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<PeriodicWeekday>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelBuilder.Entity<DatabasePlugin>().HasQueryFilter(n => n.TenantId == CurrentTenant);
             modelBuilder.TableNamesFromProperties(this);
         }
 

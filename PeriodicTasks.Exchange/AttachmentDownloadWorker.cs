@@ -159,7 +159,7 @@ namespace PeriodicTasks.Exchange
                     {"Dir", config.AttachmentPath}
                 };
 
-                string fileName = tmp.FormatText(nameRule);
+                string fileName = tmp.FormatText(nameRule, TextFormat.DefaultFormatPolicyWithPrimitives);
                 string tmpFile = fileName;
                 int addition = 0;
                 while(File.Exists(tmpFile))

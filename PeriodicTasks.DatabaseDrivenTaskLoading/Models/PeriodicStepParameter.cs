@@ -1,9 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Linq;
 
-namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models	
+namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 {
-	public class PeriodicStepParameter
+    [Index(nameof(TenantId), IsUnique = false, Name = "IX_StepParamTenant")]
+    public class PeriodicStepParameter
 	{
         [Key]
 	    public virtual int PeriodicStepParameterId { get; set; }
@@ -17,6 +20,8 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
 	    public virtual string Value { get; set; }
 
 	    public virtual string Settings { get; set; }
+
+        public virtual string? TenantId { get; set; }
 
         [ForeignKey("PeriodicStepId")]
 	    public virtual PeriodicStep PeriodicStep { get; set; }
