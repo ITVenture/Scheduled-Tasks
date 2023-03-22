@@ -9,8 +9,8 @@
 @{
     ViewBag.Title = "ITV-Schedulers";
 }
-<link rel="stylesheet" type="text/css" href="/_content/PeriodicTasks.WebExtensions/css/TaskWidgets.css" />
-<script src="/_content/PeriodicTasks.WebExtensions/js/ViewScripts/ScheduledTasks_Index.js"></script>
+<link rel="stylesheet" type="text/css" href="@("/_content/PeriodicTasks.WebExtensions/css/TaskWidgets.css".ExtendUrlWithVersion())" />
+<script src="@("/_content/PeriodicTasks.WebExtensions/js/ViewScripts/ScheduledTasks_Index.js".ExtendUrlWithVersion())"></script>
 @Html.DetailViewScript("SchedulerProperties","SchedulerDetails#=PeriodicScheduleId#", "~/ScheduledTasks/ScheduledTasks/Details?PeriodicScheduleId=#=PeriodicScheduleId#")
 @Html.DetailViewScript("StepProperties","StepDetails#=PeriodicStepId#", "~/ScheduledTasks/ScheduledTasks/StepDetails?PeriodicStepId=#=PeriodicStepId#",false)
 @Html.DetailViewScript("AssignedLogs","LogTemplate#=PeriodicRunId#","~/ScheduledTasks/ScheduledTasks/_LogTable?periodicRunId=#=PeriodicRunId#")

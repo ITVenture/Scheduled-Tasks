@@ -7,6 +7,8 @@ namespace PeriodicTasks.DbContext
 {
     public interface ITaskSchedulerContext:IPlugin
     {
+        string CurrentTenant { get; }
+
         DbSet<PeriodicLog> PeriodicLog{ get; set; }
 
         DbSet<PeriodicMonthday> PeriodicMonthdays { get;set; }

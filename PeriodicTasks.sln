@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29215.179
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeriodicTasks", "PeriodicTasks\PeriodicTasks.csproj", "{190B2452-43A0-4595-87BF-6856E5E4C0A9}"
 EndProject
@@ -32,6 +32,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskSchedulerWeb", "TaskSchedulerWeb-Plugin\TaskSchedulerWeb.csproj", "{3C2D190C-FA0E-4F2E-96F0-021A1C27C6B8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeriodicTasks.SecurityDecorators", "PeriodicTasks.SecurityDecorators\PeriodicTasks.SecurityDecorators.csproj", "{422969B5-8F7A-4FC9-A465-6CB390F1770D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeriodicTasks.DbContext.SqlServer", "PeriodicTasks.DbContext.SqlServer\PeriodicTasks.DbContext.SqlServer.csproj", "{46B2B9A8-0996-4B99-8477-51C59F5D96FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeriodicTasks.DbContext.PostgreSql", "PeriodicTasks.DbContext.PostgreSql\PeriodicTasks.DbContext.PostgreSql.csproj", "{38C2DD07-2393-4B78-A5FE-858A80924978}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeriodicTasks.DatabaseDrivenTaskLoading.EFCore", "PeriodicTasks.DatabaseDrivenTaskLoading.EFCore\PeriodicTasks.DatabaseDrivenTaskLoading.EFCore.csproj", "{CFA3944F-4268-45A9-8910-A13173B9D530}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +105,18 @@ Global
 		{422969B5-8F7A-4FC9-A465-6CB390F1770D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{422969B5-8F7A-4FC9-A465-6CB390F1770D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{422969B5-8F7A-4FC9-A465-6CB390F1770D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46B2B9A8-0996-4B99-8477-51C59F5D96FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46B2B9A8-0996-4B99-8477-51C59F5D96FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46B2B9A8-0996-4B99-8477-51C59F5D96FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46B2B9A8-0996-4B99-8477-51C59F5D96FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38C2DD07-2393-4B78-A5FE-858A80924978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38C2DD07-2393-4B78-A5FE-858A80924978}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38C2DD07-2393-4B78-A5FE-858A80924978}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38C2DD07-2393-4B78-A5FE-858A80924978}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFA3944F-4268-45A9-8910-A13173B9D530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA3944F-4268-45A9-8910-A13173B9D530}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA3944F-4268-45A9-8910-A13173B9D530}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA3944F-4268-45A9-8910-A13173B9D530}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

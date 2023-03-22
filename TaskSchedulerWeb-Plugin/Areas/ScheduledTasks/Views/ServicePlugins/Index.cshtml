@@ -8,8 +8,8 @@
 @{
     ViewBag.Title = "Plugins";
 }
-<link rel="stylesheet" type="text/css" href="/_content/PeriodicTasks.WebExtensions/css/TaskWidgets.css" />
-<script src="/_content/PeriodicTasks.WebExtensions/js/ViewScripts/ServicePlugins_Index.js"></script>
+<link rel="stylesheet" type="text/css" href="@("/_content/PeriodicTasks.WebExtensions/css/TaskWidgets.css".ExtendUrlWithVersion())" />
+<script src="@("/_content/PeriodicTasks.WebExtensions/js/ViewScripts/ServicePlugins_Index.js".ExtendUrlWithVersion())"></script>
 
 <h2>Konfigurierte Plugins</h2>
 @using (Html.BeginForm())

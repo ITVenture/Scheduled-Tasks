@@ -1,9 +1,13 @@
 ﻿using System;
+using ITVComponents.EFRepo.DIIntegration;
 using ITVComponents.EFRepo.Extensions;
+using ITVComponents.EFRepo.Options;
 using ITVComponents.Plugins.DatabaseDrivenConfiguration.Models;
+using ITVComponents.WebCoreToolkit.EntityFramework.Options;
 using ITVComponents.WebCoreToolkit.Security;
 using ITVComponents.WebCoreToolkit.WebPlugins.InjectablePlugins;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using PeriodicTasks.DatabaseDrivenTaskLoading.Models;
 
 namespace PeriodicTasks.DbContext
@@ -12,15 +16,21 @@ namespace PeriodicTasks.DbContext
     public class TaskSchedulerContext:Microsoft.EntityFrameworkCore.DbContext, ITaskSchedulerContext
     {
         private readonly IPermissionScope targetScope;
+        private readonly DbContextModelBuilderOptions<TaskSchedulerContext> modelOptions;
 
-        public TaskSchedulerContext(DbContextOptions options, IPermissionScope targetScope) : base(options)
+        public TaskSchedulerContext(DbContextOptions options, DbContextModelBuilderOptions<TaskSchedulerContext> modelOptions, IPermissionScope targetScope) : base(options)
         {
             this.targetScope = targetScope;
+            this.modelOptions = modelOptions;
         }
 
-        public TaskSchedulerContext(string connectionString, IPermissionScope targetScope, bool useTenantFilter) : this(new DbContextOptionsBuilder().UseSqlServer(connectionString).Options, targetScope)
+        public TaskSchedulerContext(ContextOptionsLoader<TaskSchedulerContext> dbOptions, IPermissionScope targetScope, bool useTenantFilter, IOptions<DbContextModelBuilderOptions<TaskSchedulerContext>> modelOptions) 
+            : this(dbOptions.Options, modelOptions.Value, targetScope)
         {
+            this.targetScope = targetScope;
             UseTenantFilter = useTenantFilter;
+            this.modelOptions = modelOptions.Value;
+            this.modelOptions.ConfigureExpressionProperty(() => CurrentTenant);
         }
 
         public string CurrentTenant => UseTenantFilter ? targetScope?.PermissionPrefix : null;
@@ -55,17 +65,7 @@ namespace PeriodicTasks.DbContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<PeriodicLog>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<PeriodicMonthday>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<PeriodicMonth>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<PeriodicRun>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<PeriodicSchedule>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<PeriodicStepParameter>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<PeriodicStep>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<DatabaseDrivenTaskLoading.Models.PeriodicTask>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<PeriodicTime>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<PeriodicWeekday>().HasQueryFilter(n => n.TenantId == CurrentTenant);
-            modelBuilder.Entity<DatabasePlugin>().HasQueryFilter(n => n.TenantId == CurrentTenant);
+            modelOptions.ConfigureModelBuilder(modelBuilder);
             modelBuilder.TableNamesFromProperties(this);
         }
 

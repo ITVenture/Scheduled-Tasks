@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -12,14 +12,12 @@
     <None Remove="Properties\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.dataaccess" Version="3.0.0" />
-    <PackageReference Include="ITVComponents.Formatting" Version="3.0.0" />
-    <PackageReference Include="itvcomponents.parallelprocessing" Version="3.0.0" />
-    <PackageReference Include="itvcomponents.plugins" Version="3.0.0" />
-    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.0.0" />
+    <PackageReference Include="ITVComponents.EFRepo" Version="3.0.0" />
+    <PackageReference Include="system.componentmodel.annotations" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />
+    <ProjectReference Include="..\PeriodicTasks.DatabaseDrivenTaskLoading\PeriodicTasks.DatabaseDrivenTaskLoading.csproj" />
+    <ProjectReference Include="..\PeriodicTasks.DbContext\PeriodicTasks.DbContext.csproj" />
   </ItemGroup>
   <Target Name="CopyPackageRel" AfterTargets="Pack" Condition="'$(Configuration)'=='Release' And '$(PushIt)'=='True'">
   </Target>
