@@ -3,7 +3,7 @@
     <LangVersion>8.0</LangVersion>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0</Version>
+    <Version>3.0.2</Version>
     <RootNamespace>TaskSchedulerWeb</RootNamespace>
     <PackageId>PeriodicTasks.WebExtensions</PackageId>
     <Copyright>IT-Venture GmbH</Copyright>
@@ -19,15 +19,13 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.0.0" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="3.0.0" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.Net.TelerikUi" Version="3.0.0" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.0.5" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="3.0.5" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.Net.TelerikUi" Version="3.0.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks.DbContext\PeriodicTasks.DbContext.csproj" />
     <ProjectReference Include="..\PeriodicTasks.FrontendHelpers\PeriodicTasks.FrontendHelpers.csproj" />
     <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />
   </ItemGroup>
-  <Target Name="CopyPackageRel" AfterTargets="Pack" Condition="'$(Configuration)'=='Release' And '$(PushIt)'=='True'">
-  </Target>
 </Project>

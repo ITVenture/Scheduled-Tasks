@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.0</Version>
+    <Version>3.0.2</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!--TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);IncludeReferencedProjectInPackage</TargetsForTfmSpecificContentInPackage-->
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
@@ -25,6 +25,4 @@
   <!--EmbeddedResource Update="Resources\SqlCommands.resx" Generator="ResXFileCodeGenerator" LastGenOutput="SqlCommands.Designer.cs" />
     <Compile Update="Resources\SqlCommands.Designer.cs" AutoGen="True" DependentUpon="SqlCommands.resx" DesignTime="True" /-->
   <!--/ItemGroup-->
-  <Target Name="CopyPackageRel" AfterTargets="Pack" Condition="'$(Configuration)'=='Release' And '$(PushIt)'=='True'">
-  </Target>
 </Project>

@@ -10,19 +10,19 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
     public class PeriodicLog
 	{
         [Key]
-	    public virtual int PeriodicLogId { get; set; }
+	    public int PeriodicLogId { get; set; }
 
-	    public virtual int PeriodicRunId { get; set; }
+	    public int PeriodicRunId { get; set; }
 
-	    public virtual int? PeriodicStepId { get; set; }
+	    public int? PeriodicStepId { get; set; }
 
-	    public virtual string Message { get; set; }
+	    public string Message { get; set; }
 
-	    public virtual int MessageType { get; set; }
+	    public int MessageType { get; set; }
 
-	    public virtual DateTime LogTime { get; set; }
+	    public DateTime LogTime { get; set; }
 
-		public virtual string? TenantId { get; set; }
+		public string? TenantId { get; set; }
 
         [ForeignKey("PeriodicRunId")]
 	    public virtual PeriodicRun PeriodicRun { get; set; }

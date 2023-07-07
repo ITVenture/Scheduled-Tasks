@@ -9,19 +9,19 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
     public class PeriodicTask
 	{
         [Key]
-	    public virtual int PeriodicTaskId { get; set; }
+	    public int PeriodicTaskId { get; set; }
 
-	    public virtual string Name { get; set; }
+	    public string Name { get; set; }
 
-	    public virtual string Description { get; set; }
+	    public string Description { get; set; }
+		
+	    public bool Active { get; set; }
 
-	    public virtual bool Active { get; set; }
+	    public int Priority { get; set; }
 
-	    public virtual int Priority { get; set; }
+        public string ExclusiveAreaName { get; set; }
 
-        public virtual string ExclusiveAreaName { get; set; }
-
-        public virtual string? TenantId { get; set; }
+        public string? TenantId { get; set; }
 
         public virtual ICollection<PeriodicStep> PeriodicSteps { get; } = new HashSet<PeriodicStep>();
 

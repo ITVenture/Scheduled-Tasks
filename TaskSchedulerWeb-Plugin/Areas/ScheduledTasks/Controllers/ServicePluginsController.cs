@@ -5,6 +5,7 @@ using ITVComponents.DataAccess.Extensions;
 using ITVComponents.Plugins;
 using ITVComponents.Plugins.DatabaseDrivenConfiguration.Models;
 using ITVComponents.Plugins.PluginServices;
+using ITVComponents.WebCoreToolkit.Configuration;
 using ITVComponents.WebCoreToolkit.Security;
 using ITVComponents.WebCoreToolkit.WebPlugins.InjectablePlugins;
 using Kendo.Mvc.Extensions;
@@ -22,15 +23,20 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
     public class ServicePluginsController : Controller
     {
         private readonly IOptions<TaskUiOptions> uiOptions;
+        private readonly IHierarchySettings<TaskUiOptions> tenantOptions;
         private readonly IPermissionScope currentScopeProvider;
         private TaskSchedulerContext context;
 
-        public ServicePluginsController(IInjectablePlugin<TaskSchedulerContext> db, IOptions<TaskUiOptions> uiOptions, IPermissionScope currentScopeProvider)
+        public ServicePluginsController(IInjectablePlugin<TaskSchedulerContext> db, IOptions<TaskUiOptions> uiOptions, IHierarchySettings<TaskUiOptions> tenantOptions, IPermissionScope currentScopeProvider)
         {
             this.uiOptions = uiOptions;
+            this.tenantOptions = tenantOptions;
             this.currentScopeProvider = currentScopeProvider;
             this.context = db.Instance;
         }
+
+        private bool UseTenantSupport =>
+            tenantOptions.ValueOrDefault?.UseTenantSupport ?? uiOptions.Value.UseTenantSupport;
 
         public ActionResult Index()
         {
@@ -66,7 +72,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             plugin.LoadOrder = context.Plugins.Count();
-            if (uiOptions.Value.UseTenantSupport)
+            if (UseTenantSupport)
             {
                 plugin.TenantId = currentScopeProvider.PermissionPrefix;
             }

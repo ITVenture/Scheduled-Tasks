@@ -8,6 +8,7 @@ using ITVComponents.DataAccess.Extensions;
 using ITVComponents.Decisions.Entities.Results;
 using ITVComponents.Helpers;
 using ITVComponents.Plugins;
+using ITVComponents.WebCoreToolkit.Configuration;
 using ITVComponents.WebCoreToolkit.EntityFramework.DataAnnotations;
 using ITVComponents.WebCoreToolkit.EntityFramework.Extensions;
 using ITVComponents.WebCoreToolkit.EntityFramework.Helpers;
@@ -40,16 +41,21 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         
         private IInjectablePlugin<ServiceContextConnector> serviceContext;
         private readonly IOptions<TaskUiOptions> uiOptions;
+        private readonly IHierarchySettings<TaskUiOptions> tenantOptions;
         private readonly IPermissionScope currentScopeProvider;
         private bool? connected;
 
-        public ScheduledTasksController(IInjectablePlugin<TaskSchedulerContext> db, IInjectablePlugin<ServiceContextConnector> serviceContext, IOptions<TaskUiOptions> uiOptions, IPermissionScope currentScopeProvider)
+        public ScheduledTasksController(IInjectablePlugin<TaskSchedulerContext> db, IInjectablePlugin<ServiceContextConnector> serviceContext, IOptions<TaskUiOptions> uiOptions, IHierarchySettings<TaskUiOptions> tenantOptions, IPermissionScope currentScopeProvider)
         {
             this.serviceContext = serviceContext;
             this.uiOptions = uiOptions;
+            this.tenantOptions = tenantOptions;
             this.currentScopeProvider = currentScopeProvider;
             this.context = db.Instance;
         }
+
+        private bool UseTenantSupport =>
+            tenantOptions.ValueOrDefault?.UseTenantSupport ?? uiOptions.Value.UseTenantSupport;
 
         private bool Connected => connected ??= ServiceContext != null;
 
@@ -190,7 +196,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         public ActionResult InsertScheduledTask([DataSourceRequest] DataSourceRequest request, PeriodicTask periodictask)
         {
 
-            if (uiOptions.Value.UseTenantSupport)
+            if (UseTenantSupport)
             {
                 periodictask.TenantId = currentScopeProvider.PermissionPrefix;
             }
@@ -292,7 +298,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             periodictime.PeriodicScheduleId = pPeriodicScheduleId;
-            if (uiOptions.Value.UseTenantSupport)
+            if (UseTenantSupport)
             {
                 periodictime.TenantId = currentScopeProvider.PermissionPrefix;
             }
@@ -359,7 +365,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             periodicmonthday.PeriodicScheduleId = pPeriodicScheduleId;
-            if (uiOptions.Value.UseTenantSupport)
+            if (UseTenantSupport)
             {
                 periodicmonthday.TenantId = currentScopeProvider.PermissionPrefix;
             }
@@ -409,7 +415,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
                 PeriodicMonth pw = new PeriodicMonth();
                 AssignMonth(Month, pw, isActive);
                 pw.PeriodicScheduleId = PeriodicScheduleId;
-                if (uiOptions.Value.UseTenantSupport)
+                if (UseTenantSupport)
                 {
                     pw.TenantId = currentScopeProvider.PermissionPrefix;
                 }
@@ -434,7 +440,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
                 PeriodicWeekday pw = new PeriodicWeekday();
                 AssignDay(Day, pw, isActive);
                 pw.PeriodicScheduleId = PeriodicScheduleId;
-                if (uiOptions.Value.UseTenantSupport)
+                if (UseTenantSupport)
                 {
                     pw.TenantId = currentScopeProvider.PermissionPrefix;
                 }
@@ -484,7 +490,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             periodicStepParameter.PeriodicStepId = pPeriodicStepId;
-            if (uiOptions.Value.UseTenantSupport)
+            if (UseTenantSupport)
             {
                 periodicStepParameter.TenantId = currentScopeProvider.PermissionPrefix;
             }
@@ -555,9 +561,10 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
 
             periodicschedule.PeriodicTaskId = pPeriodicTaskId;
-            if (uiOptions.Value.UseTenantSupport)
+            if (UseTenantSupport)
             {
                 periodicschedule.TenantId = currentScopeProvider.PermissionPrefix;
+                
             }
 
             context.PeriodicSchedules.Add(periodicschedule);
@@ -676,7 +683,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         {
             periodicStep.PeriodicTaskId = pPeriodicTaskId;
             periodicStep.StepOrder = context.PeriodicSteps.Count(n => n.PeriodicTaskId == periodicStep.PeriodicTaskId);
-            if (uiOptions.Value.UseTenantSupport)
+            if (UseTenantSupport)
             {
                 periodicStep.TenantId = currentScopeProvider.PermissionPrefix;
             }

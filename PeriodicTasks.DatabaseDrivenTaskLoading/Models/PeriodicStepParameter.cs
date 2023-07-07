@@ -9,19 +9,19 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
     public class PeriodicStepParameter
 	{
         [Key]
-	    public virtual int PeriodicStepParameterId { get; set; }
+	    public int PeriodicStepParameterId { get; set; }
 
-	    public virtual int PeriodicStepId { get; set; }
+	    public int PeriodicStepId { get; set; }
 
-	    public virtual string ParameterName { get; set; }
+	    public string ParameterName { get; set; }
 
-	    public virtual string ParameterType { get; set; }
+	    public string ParameterType { get; set; }
 
-	    public virtual string Value { get; set; }
+	    public string Value { get; set; }
 
-	    public virtual string Settings { get; set; }
+	    public string Settings { get; set; }
 
-        public virtual string? TenantId { get; set; }
+        public string? TenantId { get; set; }
 
         [ForeignKey("PeriodicStepId")]
 	    public virtual PeriodicStep PeriodicStep { get; set; }

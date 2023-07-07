@@ -10,23 +10,23 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
     public class PeriodicStep
 	{
         [Key]
-	    public virtual int PeriodicStepId { get; set; }
+	    public int PeriodicStepId { get; set; }
 
-	    public virtual int PeriodicTaskId { get; set; }
+	    public int PeriodicTaskId { get; set; }
 
-	    public virtual string Name { get; set; }
+	    public string Name { get; set; }
 
-	    public virtual string WorkerName { get; set; }
+	    public string WorkerName { get; set; }
 
-	    public virtual string OutputVariable { get; set; }
+	    public string OutputVariable { get; set; }
 
-	    public virtual string Command { get; set; }
+	    public string Command { get; set; }
 
-	    public virtual int StepOrder { get; set; }
+	    public int StepOrder { get; set; }
 
-        public virtual string ExclusiveAreaName { get; set; }
+        public string ExclusiveAreaName { get; set; }
 
-        public virtual string? TenantId { get; set; }
+        public string? TenantId { get; set; }
 
         [ForeignKey("PeriodicTaskId")]
 	    public virtual PeriodicTask PeriodicTask { get; set; }

@@ -9,35 +9,35 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
     public class PeriodicMonth
 	{
         [Key]
-	    public virtual int PeriodicMonthId { get; set; }
+	    public int PeriodicMonthId { get; set; }
 
-	    public virtual int PeriodicScheduleId { get; set; }
+	    public int PeriodicScheduleId { get; set; }
 
-        public virtual string? TenantId { get; set; }
+        public string? TenantId { get; set; }
 
-        public virtual bool Jan { get; set; }
+        public bool Jan { get; set; }
 
-        public virtual bool Feb { get; set; }
+        public bool Feb { get; set; }
 
-        public virtual bool Mar { get; set; }
+        public bool Mar { get; set; }
 
-        public virtual bool Apr { get; set; }
+        public bool Apr { get; set; }
 
-        public virtual bool May { get; set; }
+        public bool May { get; set; }
 
-        public virtual bool Jun { get; set; }
+        public bool Jun { get; set; }
 
-        public virtual bool Jul { get; set; }
+        public bool Jul { get; set; }
 
-        public virtual bool Aug { get; set; }
+        public bool Aug { get; set; }
 
-        public virtual bool Sep { get; set; }
+        public bool Sep { get; set; }
 
-	    public virtual bool Oct { get; set; }
+	    public bool Oct { get; set; }
 
-	    public virtual bool Nov { get; set; }
+	    public bool Nov { get; set; }
 
-	    public virtual bool Dec { get; set; }
+	    public bool Dec { get; set; }
 
         [ForeignKey("PeriodicScheduleId")]
 	    public virtual PeriodicSchedule PeriodicSchedule { get; set; }

@@ -11,25 +11,25 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
     public class PeriodicSchedule
 	{
         [Key]
-	    public virtual int PeriodicScheduleId { get; set; }
+	    public int PeriodicScheduleId { get; set; }
 
-	    public virtual string Name { get; set; }
+	    public string Name { get; set; }
 
-	    public virtual string Period { get; set; }
+	    public string Period { get; set; }
 
-	    public virtual DateTime FirstDate { get; set; }
+	    public DateTime FirstDate { get; set; }
 
-	    public virtual int PeriodicTaskId { get; set; }
+	    public int PeriodicTaskId { get; set; }
 
-	    public virtual int Occurrence { get; set; }
+	    public int Occurrence { get; set; }
 
-	    public virtual int Mod { get; set; }
+	    public int Mod { get; set; }
 
-        public virtual bool OnServiceStart { get; set; }
+        public bool OnServiceStart { get; set; }
 
-        public virtual string SchedulerName { get; set; }
+        public string SchedulerName { get; set; }
 
-        public virtual string? TenantId { get; set; }
+        public string? TenantId { get; set; }
 
         [ForeignKey("PeriodicTaskId")]
 	    public virtual PeriodicTask PeriodicTask { get; set; }

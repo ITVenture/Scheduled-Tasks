@@ -9,13 +9,13 @@ namespace PeriodicTasks.DatabaseDrivenTaskLoading.Models
     public class PeriodicMonthday
 	{
         [Key]
-	    public virtual int PeriodicMonthdayId { get; set; }
+	    public int PeriodicMonthdayId { get; set; }
 
-	    public virtual int DayNum { get; set; }
+	    public int DayNum { get; set; }
 
-	    public virtual int PeriodicScheduleId { get; set; }
+	    public int PeriodicScheduleId { get; set; }
 
-        public virtual string? TenantId { get; set; }
+        public string? TenantId { get; set; }
 
         [ForeignKey("PeriodicScheduleId")]
 	    public virtual PeriodicSchedule PeriodicSchedule { get; set; }
