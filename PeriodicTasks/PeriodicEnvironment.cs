@@ -175,7 +175,11 @@ namespace PeriodicTasks
             var t = taskLoader.GetRunOnceTask(taskName, (s, m) =>
             {
                 var tmp = new PeriodicTask { Name = s };
-                tmp.SetMetaDataInformation(m);
+                if (m != null)
+                {
+                    tmp.SetMetaDataInformation(m);
+                }
+
                 return tmp;
             }, t => { });
 

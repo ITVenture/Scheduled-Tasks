@@ -2,14 +2,14 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.2</Version>
+    <Version>3.0.4</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.commandlineparser" Version="3.0.5" />
-    <PackageReference Include="itvcomponents.dataaccess.linq" Version="3.0.5" />
-    <PackageReference Include="itvcomponents.formatting" Version="3.0.5" />
+    <PackageReference Include="itvcomponents.commandlineparser" Version="3.0.11" />
+    <PackageReference Include="itvcomponents.dataaccess.linq" Version="3.0.11" />
+    <PackageReference Include="itvcomponents.formatting" Version="3.0.11" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />

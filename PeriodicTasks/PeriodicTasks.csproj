@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.2</Version>
+    <Version>3.0.4</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
   </PropertyGroup>
@@ -12,9 +12,9 @@
     <Compile Update="Properties\Resources.Designer.cs" AutoGen="True" DependentUpon="Resources.resx" DesignTime="True" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.dataaccess" Version="3.0.5" />
-    <PackageReference Include="itvcomponents.interprocesscommunication.shared" Version="3.0.5" />
-    <PackageReference Include="itvcomponents.parallelprocessing" Version="3.0.5" />
-    <PackageReference Include="itvcomponents.plugins" Version="3.0.5" />
+    <PackageReference Include="itvcomponents.dataaccess" Version="3.0.11" />
+    <PackageReference Include="itvcomponents.interprocesscommunication.shared" Version="3.0.11" />
+    <PackageReference Include="itvcomponents.parallelprocessing" Version="3.0.11" />
+    <PackageReference Include="itvcomponents.plugins" Version="3.0.11" />
   </ItemGroup>
 </Project>
