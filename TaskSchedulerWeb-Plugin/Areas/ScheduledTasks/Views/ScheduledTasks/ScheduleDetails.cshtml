@@ -101,7 +101,7 @@
         @{if (Model.Period == "y")
             {
                 <div id="@($"months{Model.PeriodicScheduleId}")" class="widgetbox" style="width: 320px;margin:10px;float:left;">
-                    <h3>Months <span class="collapse k-icon k-i-arrowhead-n"></span></h3>
+                    <h3>Months <span class="collapse fa-regular fa-chevron-up"></span></h3>
                     <div class="d-flex flex-row">
                         @{
                             var mo = (PeriodicMonth)ViewData["Months"];//em.PeriodicMonths.FirstOrDefault(w => w.PeriodicScheduleId == Model.PeriodicScheduleId);

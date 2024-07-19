@@ -17,7 +17,7 @@ namespace PeriodicTasks.DbContext.Filtering
         {
 
         }
-        public ContextFilterInitializer(DbModelBuilderOptionsProvider<TContext> innerBuilder):base(innerBuilder) { }
+        public ContextFilterInitializer(DbModelBuilderOptionsProvider<TContext> parent):base(parent) { }
 
         protected override void Configure(DbContextModelBuilderOptions<TContext> options)
         {

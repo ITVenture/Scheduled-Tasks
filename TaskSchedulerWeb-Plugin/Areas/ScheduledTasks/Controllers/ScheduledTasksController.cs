@@ -727,7 +727,11 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
         
         public ActionResult GetLogEntries([DataSourceRequest]DataSourceRequest request, int pPeriodicRunId)
         {
-            return Json(context.PeriodicLog.Where(n => n.PeriodicRunId == pPeriodicRunId).ToDataSourceResult(request, n => n.ToViewModel<PeriodicLog,PeriodicLogViewModel>((m,v) => v.MessageType = (LogMessageType)m.MessageType)));
+            return Json(context.PeriodicLog.Where(n => n.PeriodicRunId == pPeriodicRunId).ToDataSourceResult(request, n => n.ToViewModel<PeriodicLog,PeriodicLogViewModel>((m,v) =>
+            {
+                v.MessageType = (LogMessageType)m.MessageType;
+                v.IsLongText = IsLongText(m.Message);
+            })));
         }
         #endregion
 
@@ -859,6 +863,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
                     pw.Sunday = isActive;
                     break;
             }
+
         }
 
         private void EnrichSchedulerInformation(TaskModel[] serviceTasks, PeriodicTask periodicTask, PeriodicTaskViewModel periodicTaskViewModel)
@@ -872,6 +877,27 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
                     periodicTaskViewModel.Pushable = true;
                 }
             }
+        }
+
+        private bool IsLongText(string message)
+        {
+            bool retVal = false;
+            if (!string.IsNullOrEmpty(message))
+            {
+                var idx = message.IndexOf("\n", StringComparison.OrdinalIgnoreCase);
+                for (var i = 0; i < 2 && idx != -1; i++)
+                {
+                    idx = message.IndexOf("\n", idx + 1, StringComparison.OrdinalIgnoreCase);
+                }
+
+                if (idx != -1)
+                {
+                    retVal = true;
+                }
+
+            }
+
+            return retVal;
         }
 
         #region classes
@@ -1000,6 +1026,7 @@ namespace TaskSchedulerWeb.Areas.ScheduledTasks.Controllers
             public string Message { get; set; }
             public LogMessageType MessageType { get; set; }
             public DateTime LogTime { get; set; }
+            public bool IsLongText { get; set; }
         }
         #endregion
     }

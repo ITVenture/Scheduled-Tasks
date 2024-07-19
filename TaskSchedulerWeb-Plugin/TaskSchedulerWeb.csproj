@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor" ToolsVersion="16.0">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.4</Version>
+    <Version>3.1.0</Version>
     <RootNamespace>TaskSchedulerWeb</RootNamespace>
     <PackageId>PeriodicTasks.WebExtensions</PackageId>
     <Copyright>IT-Venture GmbH</Copyright>
@@ -19,9 +19,9 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.0.11" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="3.0.11" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.Net.TelerikUi" Version="3.0.11" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.1.0" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="3.1.0" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.Net.TelerikUi" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks.DbContext\PeriodicTasks.DbContext.csproj" />

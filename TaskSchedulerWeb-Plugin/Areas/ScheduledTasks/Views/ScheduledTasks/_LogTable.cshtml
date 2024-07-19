@@ -27,5 +27,13 @@
         cols.Bound(d => d.PeriodicLogId).Hidden();
         cols.Bound(d => d.MessageType).ClientTemplate($"<span class=\"glyphSprite fas #=MessageType==0?'fa-info-circle':(MessageType==1?'fa-exclamation-circle':'fa-times-circle')#\" style=\"color:#=MessageType==0?'blue':(MessageType==1?'\\#FACC00':'red')#\">{Html.Encode("\x200b")}</span>").Title("").Width(50);
         cols.Bound(d => d.LogTime).Format("{0:dd.MM.yyyy HH:mm:ss}").Width(150);
-        cols.Bound(d => d.Message);
+        cols.Bound(d => d.Message).ClientTemplate(@"<div style='display:inline-block; width:100%'>
+#if (IsLongText){#
+    <div style='white-space:pre-wrap; word-wrap:anywhere; max-height:63px; width:100%;text-overflow:ellipsis;overflow:hidden;'>#=kendo.htmlEncode(Message)#</div>
+    <div>...</div>
+    <a onclick='javascript:ITVenture.Pages.TaskScheduler.TaskScheduler.Index.Runs.showLogEntry(event)'>alles zeigen</a>
+#}else{#
+<div style='white-space:pre'>#=kendo.htmlEncode(Message)#</div>
+#}#
+</div>");
     }))

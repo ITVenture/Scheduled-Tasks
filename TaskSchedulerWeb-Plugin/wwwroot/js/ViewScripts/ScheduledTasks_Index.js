@@ -95,21 +95,21 @@ ITVenture.Pages.TaskScheduler.TaskScheduler = {
                 reorderers: [],
                 InitStepView: function(periodicStepId) {
                     var wrap = $('#StepDetails'.concat(periodicStepId.toString()));
-                    $(wrap).children(".panel-wrap").on("click", "span.k-i-arrow-chevron-down", function (e) {
+                    $(wrap).children(".panel-wrap").on("click", "span.fa-chevron-down", function (e) {
                         var contentElement = $(e.target).closest(".widgetbox").find(">div");
                         $(e.target)
-                            .removeClass("k-i-arrow-chevron-down")
-                            .addClass("k-i-arrow-chevron-up");
+                            .removeClass("fa-chevron-down")
+                            .addClass("fa-chevron-up");
 
                         kendo.fx(contentElement).expand("vertical").stop().play();
                     });
 
                     //collapse
-                    $(wrap).children(".panel-wrap").on("click", "span.k-i-arrow-chevron-up", function (e) {
+                    $(wrap).children(".panel-wrap").on("click", "span.fa-chevron-up", function (e) {
                         var contentElement = $(e.target).closest(".widgetbox").find(">div");
                         $(e.target)
-                            .removeClass("k-i-arrow-chevron-up")
-                            .addClass("k-i-arrow-chevron-down");
+                            .removeClass("fa-chevron-up")
+                            .addClass("fa-chevron-down");
 
                         kendo.fx(contentElement).expand("vertical").stop().reverse();
                     });
@@ -168,6 +168,15 @@ ITVenture.Pages.TaskScheduler.TaskScheduler = {
                 retVal.errors = $("[name='Errors"+periodicTaskId+"']");
                 retVal.text = $("[name='textFilter" + periodicTaskId + "']");
                 return retVal;
+            },
+            showLogEntry: function (e) {
+                var lk = $(e.target);
+                var parent = $(lk.closest("div"));
+                var div1 = $(parent.children('div')[0]);
+                var div2 = $(parent.children('div')[1]);
+                div1.css("max-height", '100%');
+                div2.css("display", "none");
+                lk.css("display", "none");
             }
         }
     }

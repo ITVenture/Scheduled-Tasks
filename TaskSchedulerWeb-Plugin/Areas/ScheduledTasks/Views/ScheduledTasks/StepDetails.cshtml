@@ -9,7 +9,7 @@
     <div class="panel-wrap">
         <div id="sidebar">
             <div id="stepWorkerInformation" class="widgetbox">
-                <h3>Worker - Properties <span class="k-icon k-i-arrow-chevron-down"></span></h3>
+                <h3>Worker - Properties <span class="fa-regular fa-chevron-down"></span></h3>
                 <div style="display:none">
                     <h4>Description</h4>
                     <pre>Type:@Model.Type
@@ -39,7 +39,7 @@ Command - Parameter:
                 </div>
             </div>
             <div id="stepWorkerParameters" class="widgetbox">
-                <h3>Step - Configuration <span class="k-icon k-i-arrow-chevron-up"></span></h3>
+                <h3>Step - Configuration <span class="fa-regular fa-chevron-up"></span></h3>
                 <div>
                     @(Html.Kendo().Grid<ScheduledTasksController.PeriodicStepParameterModel>()
                         .Name(string.Format("StepParamConfig{0}", Model.PeriodicStepId))

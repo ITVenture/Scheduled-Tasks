@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0.4</Version>
+    <Version>3.1.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!--TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);IncludeReferencedProjectInPackage</TargetsForTfmSpecificContentInPackage-->
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
@@ -13,16 +13,16 @@
     <None Remove="Mvc\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.efrepo" Version="3.0.11" />
-    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.0.11" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.0.11" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="3.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.15" />
-    <PackageReference Include="microsoft.entityframeworkcore.design" Version="6.0.15">
+    <PackageReference Include="itvcomponents.efrepo" Version="3.1.0" />
+    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.1.0" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.1.0" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.27" />
+    <PackageReference Include="microsoft.entityframeworkcore.design" Version="6.0.27">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.27" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks.DbContext\PeriodicTasks.DbContext.csproj" />
