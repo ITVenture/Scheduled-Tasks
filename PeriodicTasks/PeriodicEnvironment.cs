@@ -8,7 +8,6 @@ using ITVComponents.Logging;
 using ITVComponents.ParallelProcessing;
 using ITVComponents.Plugins;
 using ITVComponents.Security;
-using ITVComponents.Serialization;
 using ITVComponents.Settings;
 using ITVComponents.Threading;
 using PeriodicTasks.Properties;

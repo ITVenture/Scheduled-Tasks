@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace PeriodicTasks.DataExchange.Config
 {
-    [Serializable]
     public class RootConfigurationCollection: List<RootConfiguration>
     {
         /// <summary>

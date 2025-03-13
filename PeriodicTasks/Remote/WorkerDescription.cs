@@ -5,7 +5,6 @@ using System.Text;
 
 namespace PeriodicTasks.Remote
 {
-    [Serializable]
     public class WorkerDescription
     {
         /// <summary>

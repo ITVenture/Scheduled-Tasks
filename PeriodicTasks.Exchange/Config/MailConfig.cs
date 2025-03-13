@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Text.Json.Serialization;
+using ITVComponents.Json.Converters;
 using ITVComponents.Settings;
-using Newtonsoft.Json;
 
 namespace PeriodicTasks.Exchange.Config
 {
-    [Serializable]
     public class MailConfig
     {
         public string Name { get; set; }

@@ -2,7 +2,6 @@
 
 namespace PeriodicTasks.Exchange.Config
 {
-    [Serializable]
     public class AddressPolicy
     {
         public string AddressRegex{get;set;}

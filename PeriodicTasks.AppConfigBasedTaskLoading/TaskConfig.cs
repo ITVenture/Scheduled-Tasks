@@ -9,7 +9,6 @@ using PeriodicTasks.AppConfigBasedTaskLoading.Config;
 
 namespace PeriodicTasks.AppConfigBasedTaskLoading
 {
-    [Serializable]
     public class TaskConfig:JsonSettingsSection
     {
         /// <summary>

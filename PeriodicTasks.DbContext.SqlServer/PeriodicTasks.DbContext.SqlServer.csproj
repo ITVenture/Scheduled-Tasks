@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>3.1.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -13,16 +13,16 @@
     <None Remove="Mvc\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.efrepo" Version="3.1.0" />
-    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="3.1.0" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="3.1.0" />
-    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="3.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.27" />
-    <PackageReference Include="microsoft.entityframeworkcore.design" Version="6.0.27">
+    <PackageReference Include="itvcomponents.efrepo" Version="4.0.0-PRE055" />
+    <PackageReference Include="itvcomponents.plugins.databasedrivenconfiguration" Version="4.0.0-PRE055" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit" Version="4.0.0-PRE055" />
+    <PackageReference Include="ITVComponents.WebCoreToolkit.EntityFramework" Version="4.0.0-PRE055" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.14" />
+    <PackageReference Include="microsoft.entityframeworkcore.design" Version="8.0.14">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.27" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.14" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks.DbContext\PeriodicTasks.DbContext.csproj" />

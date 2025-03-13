@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using ITVComponents.Helpers;
 using ITVComponents.InterProcessCommunication.Shared.Helpers;
+using ITVComponents.Json.Contracts;
 using ITVComponents.Logging;
 using ITVComponents.ParallelProcessing;
 using ITVComponents.Threading;
@@ -74,20 +75,6 @@ namespace PeriodicTasks
         public PeriodicTask()
         {
             singleRunRnd = new Random();
-        }
-
-        public PeriodicTask(SerializationInfo info, StreamingContext context) : this()
-        {
-            var policies = (SchedulerPolicy[])info.GetValue("SchedulerPolicies", typeof(SchedulerPolicy[]));
-            var meta = (Dictionary<string, object>)info.GetValue("CustomMetaData", typeof(Dictionary<string, object>));
-            schedules.AddRange(policies);
-            foreach (var item in meta)
-            {
-                taskMetaData[item.Key] = item.Value;
-            }
-
-            steps = (TaskStep[])info.GetValue("Steps", typeof(TaskStep[]));
-            priority = info.GetInt32("PT##Priority");
         }
 
         /// <summary>Gets the priority of this task</summary>
@@ -365,12 +352,27 @@ namespace PeriodicTasks
             return retVal;
         }
 
-        protected override void CompleteObjectData(SerializationInfo info, StreamingContext context)
+        protected override void CompleteObjectData()
         {
-            info.AddValue("SchedulerPolicies", schedules.ToArray());
-            info.AddValue("CustomMetaData", taskMetaData);
-            info.AddValue("Steps", steps);
-            info.AddValue("PT##Priority", priority);
+            Data.Add(ManualSerializationData.FromValue("SchedulerPolicies", schedules.ToArray()));
+            Data.Add(ManualSerializationData.FromValue("CustomMetaData", taskMetaData));
+            Data.Add(ManualSerializationData.FromValue("Steps", steps));
+            Data.Add(ManualSerializationData.FromValue("PT##Priority", priority));
+        }
+
+        public override void ApplyObjectData()
+        {
+            base.ApplyObjectData();
+            var policies = Data.GetDeserializedValue<SchedulerPolicy[]>("SchedulerPolicies");
+            var meta = Data.GetDeserializedValue<Dictionary<string, object>>("CustomMetaData");
+            schedules.AddRange(policies);
+            foreach (var item in meta)
+            {
+                taskMetaData[item.Key] = item.Value;
+            }
+
+            steps = Data.GetDeserializedValue<TaskStep[]>("Steps");
+            priority = Data.GetDeserializedValue<int>("PT##Priority");
         }
 
         /// <summary>

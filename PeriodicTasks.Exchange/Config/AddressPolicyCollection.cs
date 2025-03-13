@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace PeriodicTasks.Exchange.Config
 {
-    [Serializable]
     public class AddressPolicyCollection:List<AddressPolicy>
     {
     }

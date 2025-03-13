@@ -5,7 +5,6 @@ namespace PeriodicTasks.MailLogger.Config
     /// <summary>
     /// Holds configurations of events that can be protocolled by the maillog class
     /// </summary>
-    [Serializable]
     public class EventConfiguration
     {
         /// <summary>

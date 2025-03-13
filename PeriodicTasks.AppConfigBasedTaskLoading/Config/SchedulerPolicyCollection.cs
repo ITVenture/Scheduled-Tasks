@@ -8,7 +8,6 @@ using ITVComponents.ParallelProcessing;
 namespace PeriodicTasks.AppConfigBasedTaskLoading.Config
 {
 
-    [Serializable]
     public class SchedulerPolicyCollection : List<SchedulerPolicy>
     {
     }

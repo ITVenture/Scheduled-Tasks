@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace PeriodicTasks.Exchange.Config
 {
-    [Serializable]
     public class AttachmentPolicyCollection:List<AttachmentPolicy>
     {
     }

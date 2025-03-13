@@ -7,7 +7,6 @@ using System.Text;
 
 namespace PeriodicTasks.AppConfigBasedTaskLoading.Config
 {
-    [Serializable]
     public class StepCollection : List<StepDefinition>
     {
         /// <summary>

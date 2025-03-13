@@ -6,7 +6,6 @@ using ITVComponents.DataExchange.Configuration;
 
 namespace PeriodicTasks.DataExchange.Config
 {
-    [Serializable]
     public class RootConfiguration
     {
 

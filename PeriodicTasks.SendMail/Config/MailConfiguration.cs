@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
+using ITVComponents.Json.Converters;
 using ITVComponents.Settings;
-using Newtonsoft.Json;
 
 namespace PeriodicTasks.SendMail.Config
 {
-    [Serializable]
     public class MailConfiguration
     {
         /// <summary>

@@ -5,7 +5,6 @@ using System.Text;
 
 namespace PeriodicTasks.Remote
 {
-    [Serializable]
     public class ParameterDescription
     {
         public string Name { get; set; }

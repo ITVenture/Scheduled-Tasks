@@ -10,7 +10,6 @@ using PeriodicTasks.DataExchange.Config;
 
 namespace PeriodicTasks.DataExchange
 {
-    [Serializable]
     public class DataExchangeConfig:JsonSettingsSection
     {
         /// <summary>

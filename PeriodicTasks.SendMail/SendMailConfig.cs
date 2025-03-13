@@ -5,7 +5,6 @@ using PeriodicTasks.SendMail.Config;
 
 namespace PeriodicTasks.SendMail
 {
-    [Serializable]
     public class SendMailConfig:JsonSettingsSection
     {
         /// <summary>

@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace PeriodicTasks.SendMail.Config
 {
-    [Serializable]
     public class MailConfigurationCollection : List<MailConfiguration>
     {
         /// <summary>

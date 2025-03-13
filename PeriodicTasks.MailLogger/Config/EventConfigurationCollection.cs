@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace PeriodicTasks.MailLogger.Config
 {
-    [Serializable]
     public class EventConfigurationCollection: List<EventConfiguration>
     {
     }

@@ -7,7 +7,6 @@ using System.Text;
 
 namespace PeriodicTasks.AppConfigBasedTaskLoading.Config
 {
-    [Serializable]
     public class TaskCollection : List<TaskDefinition>
     {
         /// <summary>

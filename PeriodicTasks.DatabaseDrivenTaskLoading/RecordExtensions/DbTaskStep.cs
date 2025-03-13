@@ -5,7 +5,6 @@ using System.Text;
 
 namespace PeriodicTasks.DatabaseDrivenTaskLoading.RecordExtensions
 {
-    [Serializable]
     public class DbTaskStep:TaskStep
     {
         /// <summary>

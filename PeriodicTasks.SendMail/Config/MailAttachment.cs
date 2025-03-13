@@ -5,7 +5,6 @@ using System.Text;
 
 namespace PeriodicTasks.SendMail.Config
 {
-    [Serializable]
     public class MailAttachment
     {
         /// <summary>

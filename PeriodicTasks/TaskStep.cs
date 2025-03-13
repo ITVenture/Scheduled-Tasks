@@ -8,7 +8,6 @@ namespace PeriodicTasks
     /// <summary>
     /// Defines a Step of a task
     /// </summary>
-    [Serializable]
     public class TaskStep
     {
         /// <summary>

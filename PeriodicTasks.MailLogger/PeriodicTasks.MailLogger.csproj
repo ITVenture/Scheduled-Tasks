@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>3.1.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -10,7 +10,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.formatting" Version="3.1.0" />
+    <PackageReference Include="itvcomponents.formatting" Version="4.0.0-PRE055" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />

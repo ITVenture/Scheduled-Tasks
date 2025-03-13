@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace PeriodicTasks.Exchange.Config
 {
-    [Serializable]
     public class AttachmentDownloadConfigCollection:List<AttachmentDownloadConfig>
     {
         public AttachmentDownloadConfig this[string name] => this.FirstOrDefault(n => n.Name == name);

@@ -2,7 +2,6 @@
 
 namespace PeriodicTasks.MailLogger.Config
 {
-    [Serializable]
     public class MailRecipient
     {
         /// <summary>

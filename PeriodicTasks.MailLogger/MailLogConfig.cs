@@ -9,7 +9,6 @@ using PeriodicTasks.MailLogger.Config;
 
 namespace PeriodicTasks.MailLogger
 {
-    [Serializable]
     public class MailLogConfig:JsonSettingsSection
     {
         /// <summary>

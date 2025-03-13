@@ -2,7 +2,6 @@
 
 namespace PeriodicTasks.FrontendHelpers.Models
 {
-    [Serializable]
     public class TaskModel
     {
         public int TaskId { get; set; }
