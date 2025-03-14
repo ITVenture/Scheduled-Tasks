@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ITVComponents.Json.Contracts;
 
 namespace PeriodicTasks.Remote
 {
@@ -27,6 +28,6 @@ namespace PeriodicTasks.Remote
         /// <param name="taskName">the task that is known to the remote environment</param>
         /// <param name="arguments">the arguments required by the task for the custom run</param>
         /// <returns>an awaitable task that ends, when the environment has processed the custom periodicTask object</returns>
-        Task<object> InvokeWithParams(string taskName, Dictionary<string, object> arguments);
+        Task<object> InvokeWithParams(string taskName, Dictionary<string, ManualSerializationData> arguments);
     }
 }

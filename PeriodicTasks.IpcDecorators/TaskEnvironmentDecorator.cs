@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ITVComponents.InterProcessCommunication.Shared.Security;
 using ITVComponents.InterProcessCommunication.Shared.Security.PermissionBasedSecurity;
+using ITVComponents.Json.Contracts;
 using ITVComponents.Plugins;
 using PeriodicTasks.Remote;
 
-namespace PeriodicTasks.SecurityDecorators
+namespace PeriodicTasks.IpcDecorators
 {
     public class TaskEnvironmentDecorator:IServiceDecorator, ITaskEnvironment
     {
@@ -55,9 +57,11 @@ namespace PeriodicTasks.SecurityDecorators
         /// <param name="arguments">the arguments required by the task for the custom run</param>
         /// <returns>an awaitable task that ends, when the environment has processed the custom periodicTask object</returns>
         [HasPermission("PeriodicTasks.InvokeTaskTemplates")]
-        public Task<object> InvokeWithParams(string taskName, Dictionary<string, object> arguments)
+        public async Task<object> InvokeWithParams(string taskName, Dictionary<string, ManualSerializationData> arguments)
         {
-            return decorated.InvokeWithParams(taskName, arguments);
+            var ivk = new Dictionary<string, object>(from t in arguments
+                select new KeyValuePair<string, object>(t.Key, t.Value.Data));
+            return await decorated.InvokeWithParams(taskName, ivk);
         }
 
         /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>

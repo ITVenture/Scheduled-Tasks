@@ -7,6 +7,7 @@ using Dynamitey.DynamicObjects;
 using ITVComponents.Formatting;
 using ITVComponents.InterProcessCommunication.Shared.Base;
 using ITVComponents.InterProcessCommunication.ManagementExtensions.Scheduling;
+using ITVComponents.Json.Contracts;
 using ITVComponents.Plugins;
 using ITVComponents.Plugins.PluginServices;
 using ITVComponents.WebCoreToolkit.WebPlugins.InjectablePlugins;
@@ -141,8 +142,11 @@ namespace PeriodicTasks.FrontendHelpers
         {
             if (Ready)
             {
-
-                return await remoteEnvironment.InvokeWithParams(taskName, arguments);
+                var snd = new Dictionary<string, ManualSerializationData>(from t in arguments
+                    select new KeyValuePair<string, ManualSerializationData>(t.Key,
+                        ManualSerializationData.FromValue(t.Key, t.Value)));
+                var retVal =  await remoteEnvironment.InvokeWithParams(taskName, snd);
+                return retVal;
             }
 
             return null;
