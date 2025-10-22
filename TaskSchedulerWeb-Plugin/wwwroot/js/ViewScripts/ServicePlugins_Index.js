@@ -61,23 +61,31 @@ ITVenture.Pages.TaskScheduler.ServicePlugins = {
     }
 };
 $(document).ready(function () {
-    //exapand
-    $(".panel-wrap").on("click", "span.fa-chevron-down", function (e) {
+    var fxOpen = function (e) {
         var contentElement = $(e.target).closest(".widgetbox").find(">div");
         $(e.target)
             .removeClass("fa-chevron-down")
             .addClass("fa-chevron-up");
 
         kendo.fx(contentElement).expand("vertical").stop().play();
-    });
+    };
 
-    //collapse
-    $(".panel-wrap").on("click", "span.fa-chevron-up", function (e) {
+    var fxClose = function (e) {
         var contentElement = $(e.target).closest(".widgetbox").find(">div");
         $(e.target)
             .removeClass("fa-chevron-up")
             .addClass("fa-chevron-down");
 
         kendo.fx(contentElement).expand("vertical").stop().reverse();
-    });
+    };
+    //exapand
+    $(".panel-wrap").on("click", "span.fa-chevron-down", fxOpen);
+
+    //collapse
+    $(".panel-wrap").on("click", "span.fa-chevron-up", fxClose);
+
+    $(".panel-wrap").on("click", "svg.fa-chevron-down", fxOpen);
+
+    //collapse
+    $(".panel-wrap").on("click", "svg.fa-chevron-up", fxClose);
 });
