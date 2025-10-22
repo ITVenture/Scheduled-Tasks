@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.1.1</Version>
+    <Version>3.1.2</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/ITVenture/Scheduled-Tasks</RepositoryUrl>
   </PropertyGroup>
@@ -10,7 +10,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="itvcomponents.formatting" Version="3.1.4" />
+    <PackageReference Include="itvcomponents.formatting" Version="3.1.7" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PeriodicTasks\PeriodicTasks.csproj" />
